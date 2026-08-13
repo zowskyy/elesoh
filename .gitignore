@@ -15,7 +15,7 @@ blob-report
 .idea
 .vscode/*
 !.vscode/extensions.json
-reports
+/reports
 *.tsbuildinfo
 tools/
 data/
