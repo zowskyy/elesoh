@@ -9,4 +9,5 @@ export const BULLMQ_PREFIX = 'lso:bull';
 export const QUEUE_NAMES = {
   crawl: 'crawl',
   audit: 'audit',
+  report: 'report',
 } as const;

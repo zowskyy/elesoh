@@ -36,6 +36,7 @@ export type {
   PageRepository,
   RecommendationRepository,
   RecommendationWrite,
+  ReportRepository,
   ScoreRepository,
   WebsiteRepository,
 } from './ports.js';

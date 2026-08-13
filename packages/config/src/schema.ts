@@ -23,6 +23,10 @@ export const envSchema = z.object({
     .transform((value) => value === 'true'),
   OLLAMA_URL: z.string().min(1).default('http://127.0.0.1:11434'),
   OLLAMA_MODEL: z.string().min(1).default('llama3.2'),
+  AI_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((value) => value === 'true'),
   REPORT_DIRECTORY: z.string().min(1).default('./reports'),
   DISCOVERY_PROVIDER: z.string().min(1).default('imported'),
 });

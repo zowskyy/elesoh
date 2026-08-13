@@ -10,20 +10,25 @@ import {
 } from '@lso/queue';
 import {
   DrizzleAuditRepository,
+  DrizzleBusinessRepository,
   DrizzleCrawlRepository,
   DrizzleFindingRepository,
   DrizzleJobRepository,
   DrizzlePageRepository,
   DrizzleRecommendationRepository,
+  DrizzleReportRepository,
   DrizzleScoreRepository,
   DrizzleWebsiteRepository,
 } from '@lso/repositories';
 import {
+  AI_REPORT_JOB_NAME,
   AuditService,
   CRAWL_JOB_NAME,
   CrawlService,
   FULL_AUDIT_JOB_NAME,
   JobService,
+  PDF_REPORT_JOB_NAME,
+  ReportService,
   SEO_AUDIT_JOB_NAME,
 } from '@lso/services';
 import { Worker, type Job } from 'bullmq';
@@ -39,11 +44,18 @@ await writeHealthStartedAt(redis, startedAt);
 
 const jobRepo = new DrizzleJobRepository(db);
 const websiteRepo = new DrizzleWebsiteRepository(db);
+const businessRepo = new DrizzleBusinessRepository(db);
 const crawlRepo = new DrizzleCrawlRepository(db);
 const pageRepo = new DrizzlePageRepository(db);
+const auditRepo = new DrizzleAuditRepository(db);
+const findingRepo = new DrizzleFindingRepository(db);
+const recommendationRepo = new DrizzleRecommendationRepository(db);
+const scoreRepo = new DrizzleScoreRepository(db);
+const reportRepo = new DrizzleReportRepository(db);
 const jobService = new JobService(jobRepo);
 const crawlQueue = createQueue(QUEUE_NAMES.crawl, redis);
 const auditQueue = createQueue(QUEUE_NAMES.audit, redis);
+const reportQueue = createQueue(QUEUE_NAMES.report, redis);
 
 const crawlService = new CrawlService(
   websiteRepo,
@@ -59,13 +71,27 @@ const auditService = new AuditService(
   websiteRepo,
   crawlRepo,
   pageRepo,
-  new DrizzleAuditRepository(db),
-  new DrizzleFindingRepository(db),
-  new DrizzleRecommendationRepository(db),
-  new DrizzleScoreRepository(db),
+  auditRepo,
+  findingRepo,
+  recommendationRepo,
+  scoreRepo,
   jobRepo,
   jobService,
   auditQueue,
+  env,
+);
+
+const reportService = new ReportService(
+  auditRepo,
+  websiteRepo,
+  businessRepo,
+  findingRepo,
+  recommendationRepo,
+  scoreRepo,
+  reportRepo,
+  jobRepo,
+  jobService,
+  reportQueue,
   env,
 );
 
@@ -80,11 +106,7 @@ const crawlWorker = new Worker(
     log.info({ jobId, crawlId, pageCount: result.pageCount }, 'crawl job completed');
     return result;
   },
-  {
-    connection: redis,
-    prefix: BULLMQ_PREFIX,
-    concurrency: 1,
-  },
+  { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
 );
 
 const auditWorker = new Worker(
@@ -121,11 +143,30 @@ const auditWorker = new Worker(
     );
     return result;
   },
-  {
-    connection: redis,
-    prefix: BULLMQ_PREFIX,
-    concurrency: 1,
+  { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
+);
+
+const reportWorker = new Worker(
+  QUEUE_NAMES.report,
+  async (job: Job) => {
+    const jobId = String(job.data['jobId'] ?? '');
+    const auditId = String(job.data['auditId'] ?? '');
+    const format = job.data['format'] === 'pdf' ? 'pdf' : 'html';
+    log.info(
+      {
+        bullJobId: job.id,
+        jobId,
+        auditId,
+        format,
+        name: format === 'pdf' ? PDF_REPORT_JOB_NAME : AI_REPORT_JOB_NAME,
+      },
+      'report job started',
+    );
+    const result = await reportService.executeReportJob({ jobId, auditId, format });
+    log.info({ jobId, auditId, reportIds: result.reportIds }, 'report job completed');
+    return result;
   },
+  { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
 );
 
 crawlWorker.on('failed', (job, error) => {
@@ -134,17 +175,26 @@ crawlWorker.on('failed', (job, error) => {
 auditWorker.on('failed', (job, error) => {
   log.error({ bullJobId: job?.id, err: error.message }, 'audit job failed');
 });
+reportWorker.on('failed', (job, error) => {
+  log.error({ bullJobId: job?.id, err: error.message }, 'report job failed');
+});
 
 log.info(
-  { key: 'lso:health:started_at', startedAt, queues: [QUEUE_NAMES.crawl, QUEUE_NAMES.audit] },
+  {
+    key: 'lso:health:started_at',
+    startedAt,
+    queues: [QUEUE_NAMES.crawl, QUEUE_NAMES.audit, QUEUE_NAMES.report],
+  },
   'worker ready',
 );
 
 async function shutdown(): Promise<void> {
   await crawlWorker.close();
   await auditWorker.close();
+  await reportWorker.close();
   await crawlQueue.close();
   await auditQueue.close();
+  await reportQueue.close();
   await pool.end();
   redis.disconnect();
   process.exit(0);

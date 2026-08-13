@@ -9,6 +9,7 @@ import {
   DrizzleJobRepository,
   DrizzlePageRepository,
   DrizzleRecommendationRepository,
+  DrizzleReportRepository,
   DrizzleScoreRepository,
   DrizzleWebsiteRepository,
 } from '@lso/repositories';
@@ -17,6 +18,7 @@ import {
   BusinessService,
   CrawlService,
   JobService,
+  ReportService,
   WebsiteService,
 } from '@lso/services';
 import type { Queue } from 'bullmq';
@@ -30,6 +32,7 @@ import { registerAuditRoutes } from './routes/audits.js';
 import { registerBusinessRoutes } from './routes/businesses.js';
 import { registerCrawlRoutes } from './routes/crawls.js';
 import { registerHealthRoutes } from './routes/health.js';
+import { registerReportRoutes } from './routes/reports.js';
 import { registerWebsiteRoutes } from './routes/websites.js';
 
 export interface ApiDependencies {
@@ -42,8 +45,10 @@ export interface ApiDependencies {
   jobService: JobService;
   crawlService: CrawlService;
   auditService: AuditService;
+  reportService: ReportService;
   crawlQueue: Queue;
   auditQueue: Queue;
+  reportQueue: Queue;
 }
 
 export function createApp(deps: ApiDependencies): Hono<AppEnv> {
@@ -59,8 +64,10 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
     c.set('jobService', deps.jobService);
     c.set('crawlService', deps.crawlService);
     c.set('auditService', deps.auditService);
+    c.set('reportService', deps.reportService);
     c.set('crawlQueue', deps.crawlQueue);
     c.set('auditQueue', deps.auditQueue);
+    c.set('reportQueue', deps.reportQueue);
     await next();
   });
   app.onError(errorHandler);
@@ -69,6 +76,7 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
   registerWebsiteRoutes(app);
   registerCrawlRoutes(app);
   registerAuditRoutes(app);
+  registerReportRoutes(app);
   return app;
 }
 
@@ -78,6 +86,7 @@ export function createApi(env: Env): {
   redis: Redis;
   crawlQueue: Queue;
   auditQueue: Queue;
+  reportQueue: Queue;
   startedAt: string;
 } {
   const startedAt = new Date().toISOString();
@@ -86,6 +95,7 @@ export function createApi(env: Env): {
   const redis = createRedis(env.REDIS_URL);
   const crawlQueue = createQueue(QUEUE_NAMES.crawl, redis);
   const auditQueue = createQueue(QUEUE_NAMES.audit, redis);
+  const reportQueue = createQueue(QUEUE_NAMES.report, redis);
   const businessRepo = new DrizzleBusinessRepository(db);
   const websiteRepo = new DrizzleWebsiteRepository(db);
   const jobRepo = new DrizzleJobRepository(db);
@@ -95,6 +105,7 @@ export function createApi(env: Env): {
   const findingRepo = new DrizzleFindingRepository(db);
   const recommendationRepo = new DrizzleRecommendationRepository(db);
   const scoreRepo = new DrizzleScoreRepository(db);
+  const reportRepo = new DrizzleReportRepository(db);
   const businessService = new BusinessService(businessRepo);
   const websiteService = new WebsiteService(websiteRepo);
   const jobService = new JobService(jobRepo);
@@ -120,6 +131,19 @@ export function createApi(env: Env): {
     auditQueue,
     env,
   );
+  const reportService = new ReportService(
+    auditRepo,
+    websiteRepo,
+    businessRepo,
+    findingRepo,
+    recommendationRepo,
+    scoreRepo,
+    reportRepo,
+    jobRepo,
+    jobService,
+    reportQueue,
+    env,
+  );
   const app = createApp({
     pool,
     db,
@@ -130,8 +154,10 @@ export function createApi(env: Env): {
     jobService,
     crawlService,
     auditService,
+    reportService,
     crawlQueue,
     auditQueue,
+    reportQueue,
   });
-  return { app, pool, redis, crawlQueue, auditQueue, startedAt };
+  return { app, pool, redis, crawlQueue, auditQueue, reportQueue, startedAt };
 }

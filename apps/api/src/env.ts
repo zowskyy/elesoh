@@ -4,6 +4,7 @@ import type {
   BusinessService,
   CrawlService,
   JobService,
+  ReportService,
   WebsiteService,
 } from '@lso/services';
 import type { Queue } from 'bullmq';
@@ -21,7 +22,9 @@ export type AppEnv = {
     jobService: JobService;
     crawlService: CrawlService;
     auditService: AuditService;
+    reportService: ReportService;
     crawlQueue: Queue;
     auditQueue: Queue;
+    reportQueue: Queue;
   };
 };

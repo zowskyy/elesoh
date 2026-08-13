@@ -32,6 +32,12 @@ export {
   type HealthResponse,
 } from './health.js';
 export {
+  enqueueReportRequestSchema,
+  reportDtoSchema,
+  type EnqueueReportRequest,
+  type ReportDto,
+} from './report.js';
+export {
   createWebsiteRequestSchema,
   updateWebsiteRequestSchema,
   websiteDtoSchema,

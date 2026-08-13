@@ -10,6 +10,7 @@ import type {
   FindingOutcome,
   Job,
   Recommendation,
+  Report,
   UpdateBusinessInput,
   UpdateWebsiteInput,
   Website,
@@ -129,4 +130,10 @@ export interface ScoreRepository {
     categories: Record<string, number>;
   }): Promise<AuditScore>;
   findByAudit(auditRunId: string): Promise<AuditScore | null>;
+}
+
+export interface ReportRepository {
+  create(input: { auditRunId: string; format: string; path: string }): Promise<Report>;
+  findById(id: string): Promise<Report | null>;
+  listByAudit(auditRunId: string): Promise<Report[]>;
 }

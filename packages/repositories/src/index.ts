@@ -5,5 +5,6 @@ export { DrizzleFindingRepository } from './finding-repository.js';
 export { DrizzleJobRepository } from './job-repository.js';
 export { DrizzlePageRepository } from './page-repository.js';
 export { DrizzleRecommendationRepository } from './recommendation-repository.js';
+export { DrizzleReportRepository } from './report-repository.js';
 export { DrizzleScoreRepository } from './score-repository.js';
 export { DrizzleWebsiteRepository } from './website-repository.js';

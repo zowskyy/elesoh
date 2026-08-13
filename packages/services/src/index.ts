@@ -7,5 +7,11 @@ export {
 } from './crawl-service.js';
 export { NotFoundError } from './errors.js';
 export { JobService } from './job-service.js';
+export {
+  AI_REPORT_JOB_NAME,
+  PDF_REPORT_JOB_NAME,
+  REPORT_QUEUE_NAME,
+  ReportService,
+} from './report-service.js';
 export { WebsiteService } from './website-service.js';
 

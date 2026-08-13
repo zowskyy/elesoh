@@ -6,6 +6,7 @@ import type {
   Finding,
   Job,
   Recommendation,
+  Report,
   Website,
 } from '@lso/domain';
 import type {
@@ -15,6 +16,7 @@ import type {
   FindingDto,
   JobDto,
   RecommendationDto,
+  ReportDto,
   ScoreDto,
   WebsiteDto,
 } from '@lso/schemas';
@@ -118,5 +120,16 @@ export function toScoreDto(score: AuditScore): ScoreDto {
     categories: score.categories,
     createdAt: score.createdAt.toISOString(),
     updatedAt: score.updatedAt.toISOString(),
+  };
+}
+
+export function toReportDto(report: Report): ReportDto {
+  return {
+    id: report.id,
+    auditRunId: report.auditRunId,
+    format: report.format,
+    path: report.path,
+    createdAt: report.createdAt.toISOString(),
+    updatedAt: report.updatedAt.toISOString(),
   };
 }

@@ -164,6 +164,12 @@ importers:
         specifier: ^4.20.3
         version: 4.23.12
 
+  packages/ai:
+    dependencies:
+      zod:
+        specifier: ^3.25.76
+        version: 3.25.76
+
   packages/audits:
     dependencies:
       '@lso/domain':
@@ -239,6 +245,12 @@ importers:
         specifier: ^5.6.1
         version: 5.11.1
 
+  packages/reports:
+    dependencies:
+      '@lso/ai':
+        specifier: workspace:*
+        version: link:../ai
+
   packages/repositories:
     dependencies:
       '@lso/database':
@@ -267,6 +279,9 @@ importers:
 
   packages/services:
     dependencies:
+      '@lso/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@lso/audits':
         specifier: workspace:*
         version: link:../audits
@@ -282,6 +297,9 @@ importers:
       '@lso/performance':
         specifier: workspace:*
         version: link:../performance
+      '@lso/reports':
+        specifier: workspace:*
+        version: link:../reports
       '@lso/scoring':
         specifier: workspace:*
         version: link:../scoring

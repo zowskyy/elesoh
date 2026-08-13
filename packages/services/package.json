@@ -10,11 +10,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@lso/ai": "workspace:*",
     "@lso/audits": "workspace:*",
     "@lso/config": "workspace:*",
     "@lso/crawler": "workspace:*",
     "@lso/domain": "workspace:*",
     "@lso/performance": "workspace:*",
+    "@lso/reports": "workspace:*",
     "@lso/scoring": "workspace:*",
     "bullmq": "^5.56.4"
   }

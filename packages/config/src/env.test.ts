@@ -15,6 +15,7 @@ describe('parseEnv', () => {
     expect(env.CRAWLER_ALLOW_LOCALHOST).toBe(false);
     expect(env.PERFORMANCE_ENABLED).toBe(false);
     expect(env.AUDIT_RULESET_VERSION).toBe('seo-v1');
+    expect(env.AI_ENABLED).toBe(true);
   });
 
   it('rejects missing DATABASE_URL', () => {
