@@ -1,0 +1,33 @@
+{
+  "name": "@lso/api",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.0",
+    "@lso/config": "workspace:*",
+    "@lso/database": "workspace:*",
+    "@lso/domain": "workspace:*",
+    "@lso/logging": "workspace:*",
+    "@lso/queue": "workspace:*",
+    "@lso/repositories": "workspace:*",
+    "@lso/schemas": "workspace:*",
+    "@lso/services": "workspace:*",
+    "hono": "^4.8.12",
+    "ioredis": "^5.6.1",
+    "pg": "^8.16.3",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.15.5",
+    "tsx": "^4.20.3"
+  }
+}

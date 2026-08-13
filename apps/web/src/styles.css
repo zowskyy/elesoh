@@ -1,0 +1,62 @@
+:root {
+  font-family: Segoe UI, system-ui, sans-serif;
+  color: #111;
+  background: #f4f4f1;
+}
+
+body {
+  margin: 0;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  min-height: 100vh;
+}
+
+aside {
+  background: #111;
+  color: #fff;
+  padding: 1.5rem 1rem;
+}
+
+aside h1 {
+  font-size: 1rem;
+  margin: 0 0 1.5rem;
+}
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+nav a {
+  color: #ddd;
+  text-decoration: none;
+}
+
+nav a.active {
+  color: #fff;
+  font-weight: 600;
+}
+
+main {
+  padding: 2rem;
+}
+
+form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+input,
+select,
+button {
+  padding: 0.4rem 0.6rem;
+}
+
+.error {
+  color: #a40000;
+}

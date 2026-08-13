@@ -1,0 +1,17 @@
+{
+  "name": "@lso/repositories",
+  "version": "0.1.0",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@lso/database": "workspace:*",
+    "@lso/domain": "workspace:*",
+    "drizzle-orm": "^0.44.4"
+  }
+}

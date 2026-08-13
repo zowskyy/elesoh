@@ -1,0 +1,21 @@
+import { z } from 'zod';
+
+export const envSchema = z.object({
+  DATABASE_URL: z.string().min(1),
+  REDIS_URL: z.string().min(1),
+  API_PORT: z.coerce.number().int().positive().default(3001),
+  WEB_PORT: z.coerce.number().int().positive().default(3000),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  CRAWLER_MAX_PAGES: z.coerce.number().int().positive().default(100),
+  CRAWLER_MAX_DEPTH: z.coerce.number().int().nonnegative().default(3),
+  CRAWLER_CONCURRENCY: z.coerce.number().int().positive().default(2),
+  CRAWLER_TIMEOUT: z.coerce.number().int().positive().default(10_000),
+  AUDIT_TIMEOUT: z.coerce.number().int().positive().default(300_000),
+  OLLAMA_URL: z.string().min(1).default('http://127.0.0.1:11434'),
+  OLLAMA_MODEL: z.string().min(1).default('llama3.2'),
+  REPORT_DIRECTORY: z.string().min(1).default('./reports'),
+  DISCOVERY_PROVIDER: z.string().min(1).default('imported'),
+});
+
+export type Env = z.infer<typeof envSchema>;

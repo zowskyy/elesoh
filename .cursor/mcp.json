@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "redis": {
+      "command": "py",
+      "args": [
+        "-3",
+        "-m",
+        "uv",
+        "tool",
+        "run",
+        "--from",
+        "redis-mcp-server==0.5.1",
+        "redis-mcp-server",
+        "--url",
+        "redis://localhost:6379/0"
+      ]
+    }
+  }
+}

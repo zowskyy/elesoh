@@ -1,0 +1,44 @@
+{
+  "name": "local-site-optimizer",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "packageManager": "pnpm@10.14.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "vitest run",
+    "build": "pnpm -r --if-present build",
+    "dev": "pnpm run --parallel --filter @lso/api --filter @lso/web --filter @lso/worker dev",
+    "db:generate": "pnpm --filter @lso/database generate",
+    "db:migrate": "pnpm --filter @lso/database migrate",
+    "db:seed": "pnpm --filter @lso/database seed"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "@lso/api": "workspace:*",
+    "@lso/config": "workspace:*",
+    "@lso/database": "workspace:*",
+    "@lso/repositories": "workspace:*",
+    "@lso/services": "workspace:*",
+    "@types/node": "^22.16.0",
+    "embedded-postgres": "18.4.0-beta.17",
+    "eslint": "^9.32.0",
+    "eslint-config-prettier": "^10.1.0",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.38.0",
+    "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "embedded-postgres",
+      "@embedded-postgres/windows-x64",
+      "esbuild"
+    ]
+  }
+}
