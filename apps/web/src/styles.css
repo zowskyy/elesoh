@@ -60,3 +60,8 @@ button {
 .error {
   color: #a40000;
 }
+
+.muted {
+  color: #666;
+  font-size: 0.9rem;
+}

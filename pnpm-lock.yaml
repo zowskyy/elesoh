@@ -144,6 +144,9 @@ importers:
       '@lso/database':
         specifier: workspace:*
         version: link:../../packages/database
+      '@lso/discovery':
+        specifier: workspace:*
+        version: link:../../packages/discovery
       '@lso/logging':
         specifier: workspace:*
         version: link:../../packages/logging
@@ -222,6 +225,12 @@ importers:
         specifier: ^4.20.3
         version: 4.23.12
 
+  packages/discovery:
+    dependencies:
+      '@lso/security':
+        specifier: workspace:*
+        version: link:../security
+
   packages/domain: {}
 
   packages/logging:
@@ -256,6 +265,9 @@ importers:
       '@lso/database':
         specifier: workspace:*
         version: link:../database
+      '@lso/discovery':
+        specifier: workspace:*
+        version: link:../discovery
       '@lso/domain':
         specifier: workspace:*
         version: link:../domain
@@ -291,6 +303,9 @@ importers:
       '@lso/crawler':
         specifier: workspace:*
         version: link:../crawler
+      '@lso/discovery':
+        specifier: workspace:*
+        version: link:../discovery
       '@lso/domain':
         specifier: workspace:*
         version: link:../domain

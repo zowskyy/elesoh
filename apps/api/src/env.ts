@@ -3,6 +3,7 @@ import type {
   AuditService,
   BusinessService,
   CrawlService,
+  DiscoveryService,
   JobService,
   ReportService,
   WebsiteService,
@@ -23,8 +24,10 @@ export type AppEnv = {
     crawlService: CrawlService;
     auditService: AuditService;
     reportService: ReportService;
+    discoveryService: DiscoveryService;
     crawlQueue: Queue;
     auditQueue: Queue;
     reportQueue: Queue;
+    discoveryQueue: Queue;
   };
 };

@@ -24,7 +24,7 @@ export function DashboardPage(): ReactElement {
   return (
     <section>
       <h2>Dashboard</h2>
-      <p>Stage A infrastructure foundation.</p>
+      <p>LocalSite Optimizer — crawl, audit, report, and discover local businesses.</p>
       {error !== null ? <p className="error">{error}</p> : null}
       {health !== null ? (
         <dl>

@@ -14,7 +14,9 @@ import {
   DrizzleCrawlRepository,
   DrizzleFindingRepository,
   DrizzleJobRepository,
+  DrizzleOpportunityRepository,
   DrizzlePageRepository,
+  DrizzleProviderRunRepository,
   DrizzleRecommendationRepository,
   DrizzleReportRepository,
   DrizzleScoreRepository,
@@ -25,12 +27,15 @@ import {
   AuditService,
   CRAWL_JOB_NAME,
   CrawlService,
+  DISCOVER_JOB_NAME,
+  DiscoveryService,
   FULL_AUDIT_JOB_NAME,
   JobService,
   PDF_REPORT_JOB_NAME,
   ReportService,
   SEO_AUDIT_JOB_NAME,
 } from '@lso/services';
+import type { DiscoverQuery } from '@lso/discovery';
 import { Worker, type Job } from 'bullmq';
 
 const env = loadEnv();
@@ -52,10 +57,13 @@ const findingRepo = new DrizzleFindingRepository(db);
 const recommendationRepo = new DrizzleRecommendationRepository(db);
 const scoreRepo = new DrizzleScoreRepository(db);
 const reportRepo = new DrizzleReportRepository(db);
+const opportunityRepo = new DrizzleOpportunityRepository(db);
+const providerRunRepo = new DrizzleProviderRunRepository(db);
 const jobService = new JobService(jobRepo);
 const crawlQueue = createQueue(QUEUE_NAMES.crawl, redis);
 const auditQueue = createQueue(QUEUE_NAMES.audit, redis);
 const reportQueue = createQueue(QUEUE_NAMES.report, redis);
+const discoveryQueue = createQueue(QUEUE_NAMES.discovery, redis);
 
 const crawlService = new CrawlService(
   websiteRepo,
@@ -92,6 +100,17 @@ const reportService = new ReportService(
   jobRepo,
   jobService,
   reportQueue,
+  env,
+);
+
+const discoveryService = new DiscoveryService(
+  businessRepo,
+  websiteRepo,
+  opportunityRepo,
+  providerRunRepo,
+  jobRepo,
+  jobService,
+  discoveryQueue,
   env,
 );
 
@@ -169,6 +188,27 @@ const reportWorker = new Worker(
   { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
 );
 
+const discoveryWorker = new Worker(
+  QUEUE_NAMES.discovery,
+  async (job: Job) => {
+    const jobId = String(job.data['jobId'] ?? '');
+    const providerRunId = String(job.data['providerRunId'] ?? '');
+    const query = job.data['query'] as DiscoverQuery;
+    log.info(
+      { bullJobId: job.id, jobId, providerRunId, name: DISCOVER_JOB_NAME },
+      'discovery job started',
+    );
+    const result = await discoveryService.executeDiscoverJob({
+      jobId,
+      providerRunId,
+      query,
+    });
+    log.info({ jobId, providerRunId, ...result }, 'discovery job completed');
+    return result;
+  },
+  { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
+);
+
 crawlWorker.on('failed', (job, error) => {
   log.error({ bullJobId: job?.id, err: error.message }, 'crawl job failed');
 });
@@ -178,12 +218,20 @@ auditWorker.on('failed', (job, error) => {
 reportWorker.on('failed', (job, error) => {
   log.error({ bullJobId: job?.id, err: error.message }, 'report job failed');
 });
+discoveryWorker.on('failed', (job, error) => {
+  log.error({ bullJobId: job?.id, err: error.message }, 'discovery job failed');
+});
 
 log.info(
   {
     key: 'lso:health:started_at',
     startedAt,
-    queues: [QUEUE_NAMES.crawl, QUEUE_NAMES.audit, QUEUE_NAMES.report],
+    queues: [
+      QUEUE_NAMES.crawl,
+      QUEUE_NAMES.audit,
+      QUEUE_NAMES.report,
+      QUEUE_NAMES.discovery,
+    ],
   },
   'worker ready',
 );
@@ -192,9 +240,11 @@ async function shutdown(): Promise<void> {
   await crawlWorker.close();
   await auditWorker.close();
   await reportWorker.close();
+  await discoveryWorker.close();
   await crawlQueue.close();
   await auditQueue.close();
   await reportQueue.close();
+  await discoveryQueue.close();
   await pool.end();
   redis.disconnect();
   process.exit(0);

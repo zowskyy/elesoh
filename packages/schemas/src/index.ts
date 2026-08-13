@@ -32,6 +32,14 @@ export {
   type HealthResponse,
 } from './health.js';
 export {
+  enqueueDiscoveryRequestSchema,
+  opportunityDtoSchema,
+  providerRunDtoSchema,
+  type EnqueueDiscoveryRequest,
+  type OpportunityDto,
+  type ProviderRunDto,
+} from './discovery.js';
+export {
   enqueueReportRequestSchema,
   reportDtoSchema,
   type EnqueueReportRequest,

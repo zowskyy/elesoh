@@ -4,10 +4,10 @@ Last updated: 2026-08-13
 
 ## Current
 
-Stage **D — AI + Reporting** is PASS. Next is Stage **E — Business Discovery**.
+Stage **E — Business Discovery** is PASS. Next is Stage **F — Agent/MCP Layer**.
 
 ## Runtime
 
-- Queues: `crawl`, `audit`, `report`
-- `AI_ENABLED` / `OLLAMA_*` for narratives; fallback always available
-- Reports written under monorepo `./reports`
+- Queues: `crawl`, `audit`, `report`, `discovery`
+- Discovery providers: `imported`, `osm` (Nominatim + Overpass)
+- Opportunity: no website=100, unaudited site=80, else `100 - auditOverall`

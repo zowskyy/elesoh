@@ -1,5 +1,5 @@
 {
-  "name": "@lso/repositories",
+  "name": "@lso/discovery",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -10,9 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@lso/database": "workspace:*",
-    "@lso/discovery": "workspace:*",
-    "@lso/domain": "workspace:*",
-    "drizzle-orm": "^0.44.4"
+    "@lso/security": "workspace:*"
   }
 }

@@ -46,6 +46,32 @@ export class DrizzleBusinessRepository implements BusinessRepository {
     return rows.map(mapBusiness);
   }
 
+  public async findByWebsiteUrl(
+    organizationId: string,
+    websiteUrl: string,
+  ): Promise<Business | null> {
+    const rows = await this.db
+      .select()
+      .from(businesses)
+      .where(eq(businesses.organizationId, organizationId));
+    const normalized = websiteUrl.toLowerCase().replace(/\/$/, '');
+    const row = rows.find((entry) => {
+      if (entry.websiteUrl === null) return false;
+      return entry.websiteUrl.toLowerCase().replace(/\/$/, '') === normalized;
+    });
+    return row === undefined ? null : mapBusiness(row);
+  }
+
+  public async findByName(organizationId: string, name: string): Promise<Business | null> {
+    const rows = await this.db
+      .select()
+      .from(businesses)
+      .where(eq(businesses.organizationId, organizationId));
+    const key = name.trim().toLowerCase();
+    const row = rows.find((entry) => entry.name.trim().toLowerCase() === key);
+    return row === undefined ? null : mapBusiness(row);
+  }
+
   public async update(id: string, input: UpdateBusinessInput): Promise<Business> {
     const rows = await this.db
       .update(businesses)

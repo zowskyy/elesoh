@@ -1,3 +1,9 @@
+export {
+  DISCOVER_JOB_NAME,
+  DISCOVERY_QUEUE_NAME,
+  DiscoveryService,
+  VERIFY_WEBSITE_JOB_NAME,
+} from './discovery-service.js';
 export { AuditService, AUDIT_QUEUE_NAME, FULL_AUDIT_JOB_NAME, SEO_AUDIT_JOB_NAME } from './audit-service.js';
 export { BusinessService } from './business-service.js';
 export {

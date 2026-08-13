@@ -10,4 +10,5 @@ export const QUEUE_NAMES = {
   crawl: 'crawl',
   audit: 'audit',
   report: 'report',
+  discovery: 'discovery',
 } as const;

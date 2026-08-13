@@ -2,6 +2,7 @@ import type {
   AuditRun,
   AuditScore,
   Business,
+  BusinessLocation,
   Crawl,
   CreateBusinessInput,
   CreateJobInput,
@@ -20,6 +21,8 @@ export interface BusinessRepository {
   create(input: CreateBusinessInput): Promise<Business>;
   findById(id: string): Promise<Business | null>;
   listByOrganization(organizationId: string): Promise<Business[]>;
+  findByWebsiteUrl(organizationId: string, websiteUrl: string): Promise<Business | null>;
+  findByName(organizationId: string, name: string): Promise<Business | null>;
   update(id: string, input: UpdateBusinessInput): Promise<Business>;
   delete(id: string): Promise<void>;
 }
@@ -136,4 +139,52 @@ export interface ReportRepository {
   create(input: { auditRunId: string; format: string; path: string }): Promise<Report>;
   findById(id: string): Promise<Report | null>;
   listByAudit(auditRunId: string): Promise<Report[]>;
+}
+
+export interface ProviderRun {
+  id: string;
+  provider: string;
+  status: string;
+  payload: Record<string, unknown> | null;
+  startedAt: Date | null;
+  completedAt: Date | null;
+  organizationId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface ProviderRunRepository {
+  create(input: {
+    provider: string;
+    status: string;
+    payload?: Record<string, unknown>;
+    organizationId?: string;
+  }): Promise<ProviderRun>;
+  findById(id: string): Promise<ProviderRun | null>;
+  markRunning(id: string): Promise<ProviderRun>;
+  markCompleted(id: string, payload: Record<string, unknown>): Promise<ProviderRun>;
+  markFailed(id: string, error: string): Promise<ProviderRun>;
+}
+
+export interface OpportunityRow {
+  businessId: string;
+  name: string;
+  websiteUrl: string | null;
+  opportunityScore: number;
+  auditScore: number | null;
+  reason: string;
+}
+
+export interface OpportunityRepository {
+  listByOrganization(organizationId: string): Promise<OpportunityRow[]>;
+  createLocation(input: {
+    businessId: string;
+    address: string | null;
+    city: string | null;
+    region: string | null;
+    postalCode: string | null;
+    country: string | null;
+    latitude: number | null;
+    longitude: number | null;
+  }): Promise<BusinessLocation>;
 }

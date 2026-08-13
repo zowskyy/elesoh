@@ -14,6 +14,7 @@
     "@lso/audits": "workspace:*",
     "@lso/config": "workspace:*",
     "@lso/crawler": "workspace:*",
+    "@lso/discovery": "workspace:*",
     "@lso/domain": "workspace:*",
     "@lso/performance": "workspace:*",
     "@lso/reports": "workspace:*",

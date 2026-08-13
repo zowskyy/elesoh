@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppShell } from './AppShell';
 import { BusinessesPage } from './pages/BusinessesPage';
 import { DashboardPage } from './pages/DashboardPage';
+import { DiscoveryPage } from './pages/DiscoveryPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { WebsitesPage } from './pages/WebsitesPage';
 import './styles.css';
@@ -21,6 +22,7 @@ createRoot(root).render(
           <Route path="/" element={<DashboardPage />} />
           <Route path="/businesses" element={<BusinessesPage />} />
           <Route path="/websites" element={<WebsitesPage />} />
+          <Route path="/discovery" element={<DiscoveryPage />} />
           <Route path="/audits" element={<PlaceholderPage title="Audits" />} />
           <Route path="/findings" element={<PlaceholderPage title="Findings" />} />
           <Route path="/reports" element={<PlaceholderPage title="Reports" />} />

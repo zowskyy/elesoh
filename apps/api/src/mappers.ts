@@ -5,6 +5,8 @@ import type {
   Crawl,
   Finding,
   Job,
+  OpportunityRow,
+  ProviderRun,
   Recommendation,
   Report,
   Website,
@@ -15,6 +17,8 @@ import type {
   CrawlDto,
   FindingDto,
   JobDto,
+  OpportunityDto,
+  ProviderRunDto,
   RecommendationDto,
   ReportDto,
   ScoreDto,
@@ -131,5 +135,29 @@ export function toReportDto(report: Report): ReportDto {
     path: report.path,
     createdAt: report.createdAt.toISOString(),
     updatedAt: report.updatedAt.toISOString(),
+  };
+}
+
+export function toOpportunityDto(row: OpportunityRow): OpportunityDto {
+  return {
+    businessId: row.businessId,
+    name: row.name,
+    websiteUrl: row.websiteUrl,
+    opportunityScore: row.opportunityScore,
+    auditScore: row.auditScore,
+    reason: row.reason,
+  };
+}
+
+export function toProviderRunDto(run: ProviderRun): ProviderRunDto {
+  return {
+    id: run.id,
+    provider: run.provider,
+    status: run.status,
+    payload: run.payload,
+    startedAt: run.startedAt?.toISOString() ?? null,
+    completedAt: run.completedAt?.toISOString() ?? null,
+    createdAt: run.createdAt.toISOString(),
+    updatedAt: run.updatedAt.toISOString(),
   };
 }
