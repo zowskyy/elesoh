@@ -13,6 +13,8 @@ describe('parseEnv', () => {
     expect(env.LOG_LEVEL).toBe('info');
     expect(env.CRAWLER_MAX_PAGES).toBe(100);
     expect(env.CRAWLER_ALLOW_LOCALHOST).toBe(false);
+    expect(env.PERFORMANCE_ENABLED).toBe(false);
+    expect(env.AUDIT_RULESET_VERSION).toBe('seo-v1');
   });
 
   it('rejects missing DATABASE_URL', () => {

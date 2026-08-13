@@ -132,10 +132,23 @@ export interface Recommendation {
 export interface AuditRun {
   id: string;
   websiteId: string;
+  crawlId: string | null;
+  mode: 'seo' | 'full';
   status: string;
   version: string;
   startedAt: Date | null;
   completedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface AuditScore {
+  id: string;
+  auditRunId: string;
+  overall: number;
+  seo: number;
+  performance: number | null;
+  categories: Record<string, number>;
   createdAt: Date;
   updatedAt: Date;
 }

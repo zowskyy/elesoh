@@ -1,5 +1,11 @@
 import type { Database } from '@lso/database';
-import type { BusinessService, CrawlService, JobService, WebsiteService } from '@lso/services';
+import type {
+  AuditService,
+  BusinessService,
+  CrawlService,
+  JobService,
+  WebsiteService,
+} from '@lso/services';
 import type { Queue } from 'bullmq';
 import type { Redis } from 'ioredis';
 import type pg from 'pg';
@@ -14,6 +20,8 @@ export type AppEnv = {
     websiteService: WebsiteService;
     jobService: JobService;
     crawlService: CrawlService;
+    auditService: AuditService;
     crawlQueue: Queue;
+    auditQueue: Queue;
   };
 };

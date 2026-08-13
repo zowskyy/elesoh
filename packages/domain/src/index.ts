@@ -1,6 +1,7 @@
 export {
   DEFAULT_ORGANIZATION_ID,
   type AuditRun,
+  type AuditScore,
   type Business,
   type BusinessLocation,
   type Crawl,
@@ -24,10 +25,17 @@ export {
   type Website,
 } from './entities.js';
 export type {
+  AuditRepository,
   BusinessRepository,
+  CrawlPageSnapshot,
   CrawlRepository,
+  FindingRepository,
+  FindingWrite,
   JobRepository,
   PageEvidenceWrite,
   PageRepository,
+  RecommendationRepository,
+  RecommendationWrite,
+  ScoreRepository,
   WebsiteRepository,
 } from './ports.js';

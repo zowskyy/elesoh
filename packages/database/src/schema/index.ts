@@ -1,4 +1,4 @@
-export { auditRuns } from './audits.js';
+export { auditRuns, auditScores } from './audits.js';
 export { businessLocations, businesses } from './businesses.js';
 export {
   crawls,

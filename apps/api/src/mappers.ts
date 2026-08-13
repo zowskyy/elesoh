@@ -1,5 +1,23 @@
-import type { Business, Crawl, Job, Website } from '@lso/domain';
-import type { BusinessDto, CrawlDto, JobDto, WebsiteDto } from '@lso/schemas';
+import type {
+  AuditRun,
+  AuditScore,
+  Business,
+  Crawl,
+  Finding,
+  Job,
+  Recommendation,
+  Website,
+} from '@lso/domain';
+import type {
+  AuditDto,
+  BusinessDto,
+  CrawlDto,
+  FindingDto,
+  JobDto,
+  RecommendationDto,
+  ScoreDto,
+  WebsiteDto,
+} from '@lso/schemas';
 
 export function toBusinessDto(business: Business): BusinessDto {
   return {
@@ -48,5 +66,57 @@ export function toJobDto(job: Job): JobDto {
     startedAt: job.startedAt?.toISOString() ?? null,
     completedAt: job.completedAt?.toISOString() ?? null,
     error: job.error,
+  };
+}
+
+export function toAuditDto(audit: AuditRun): AuditDto {
+  return {
+    id: audit.id,
+    websiteId: audit.websiteId,
+    crawlId: audit.crawlId,
+    mode: audit.mode,
+    status: audit.status,
+    version: audit.version,
+    startedAt: audit.startedAt?.toISOString() ?? null,
+    completedAt: audit.completedAt?.toISOString() ?? null,
+    createdAt: audit.createdAt.toISOString(),
+    updatedAt: audit.updatedAt.toISOString(),
+  };
+}
+
+export function toFindingDto(finding: Finding): FindingDto {
+  return {
+    id: finding.id,
+    auditRunId: finding.auditRunId,
+    evidenceId: finding.evidenceId,
+    ruleId: finding.ruleId,
+    outcome: finding.outcome,
+    summary: finding.summary,
+    createdAt: finding.createdAt.toISOString(),
+    updatedAt: finding.updatedAt.toISOString(),
+  };
+}
+
+export function toRecommendationDto(recommendation: Recommendation): RecommendationDto {
+  return {
+    id: recommendation.id,
+    findingId: recommendation.findingId,
+    priority: recommendation.priority,
+    action: recommendation.action,
+    createdAt: recommendation.createdAt.toISOString(),
+    updatedAt: recommendation.updatedAt.toISOString(),
+  };
+}
+
+export function toScoreDto(score: AuditScore): ScoreDto {
+  return {
+    id: score.id,
+    auditRunId: score.auditRunId,
+    overall: score.overall,
+    seo: score.seo,
+    performance: score.performance,
+    categories: score.categories,
+    createdAt: score.createdAt.toISOString(),
+    updatedAt: score.updatedAt.toISOString(),
   };
 }

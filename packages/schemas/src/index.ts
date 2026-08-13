@@ -1,4 +1,16 @@
 export {
+  auditDtoSchema,
+  enqueueAuditRequestSchema,
+  findingDtoSchema,
+  recommendationDtoSchema,
+  scoreDtoSchema,
+  type AuditDto,
+  type EnqueueAuditRequest,
+  type FindingDto,
+  type RecommendationDto,
+  type ScoreDto,
+} from './audit.js';
+export {
   businessDtoSchema,
   createBusinessRequestSchema,
   updateBusinessRequestSchema,

@@ -16,6 +16,11 @@ export const envSchema = z.object({
     .default('false')
     .transform((value) => value === 'true'),
   AUDIT_TIMEOUT: z.coerce.number().int().positive().default(300_000),
+  AUDIT_RULESET_VERSION: z.string().min(1).default('seo-v1'),
+  PERFORMANCE_ENABLED: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
   OLLAMA_URL: z.string().min(1).default('http://127.0.0.1:11434'),
   OLLAMA_MODEL: z.string().min(1).default('llama3.2'),
   REPORT_DIRECTORY: z.string().min(1).default('./reports'),

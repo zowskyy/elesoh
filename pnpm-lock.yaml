@@ -164,6 +164,12 @@ importers:
         specifier: ^4.20.3
         version: 4.23.12
 
+  packages/audits:
+    dependencies:
+      '@lso/domain':
+        specifier: workspace:*
+        version: link:../domain
+
   packages/config:
     dependencies:
       dotenv:
@@ -218,6 +224,12 @@ importers:
         specifier: ^9.7.0
         version: 9.14.0
 
+  packages/performance:
+    dependencies:
+      '@lso/audits':
+        specifier: workspace:*
+        version: link:../audits
+
   packages/queue:
     dependencies:
       bullmq:
@@ -245,10 +257,19 @@ importers:
         specifier: ^3.25.76
         version: 3.25.76
 
+  packages/scoring:
+    dependencies:
+      '@lso/audits':
+        specifier: workspace:*
+        version: link:../audits
+
   packages/security: {}
 
   packages/services:
     dependencies:
+      '@lso/audits':
+        specifier: workspace:*
+        version: link:../audits
       '@lso/config':
         specifier: workspace:*
         version: link:../config
@@ -258,6 +279,12 @@ importers:
       '@lso/domain':
         specifier: workspace:*
         version: link:../domain
+      '@lso/performance':
+        specifier: workspace:*
+        version: link:../performance
+      '@lso/scoring':
+        specifier: workspace:*
+        version: link:../scoring
       bullmq:
         specifier: ^5.56.4
         version: 5.81.3

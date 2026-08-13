@@ -8,4 +8,5 @@ export const REDIS_KEY = {
 export const BULLMQ_PREFIX = 'lso:bull';
 export const QUEUE_NAMES = {
   crawl: 'crawl',
+  audit: 'audit',
 } as const;

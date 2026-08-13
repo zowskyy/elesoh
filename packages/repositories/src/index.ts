@@ -1,5 +1,9 @@
+export { DrizzleAuditRepository } from './audit-repository.js';
 export { DrizzleBusinessRepository } from './business-repository.js';
 export { DrizzleCrawlRepository } from './crawl-repository.js';
+export { DrizzleFindingRepository } from './finding-repository.js';
 export { DrizzleJobRepository } from './job-repository.js';
 export { DrizzlePageRepository } from './page-repository.js';
+export { DrizzleRecommendationRepository } from './recommendation-repository.js';
+export { DrizzleScoreRepository } from './score-repository.js';
 export { DrizzleWebsiteRepository } from './website-repository.js';

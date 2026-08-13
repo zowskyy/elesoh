@@ -1,6 +1,6 @@
 import { crawls, type Database } from '@lso/database';
 import type { Crawl, CrawlRepository } from '@lso/domain';
-import { eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 
 function mapCrawl(row: typeof crawls.$inferSelect): Crawl {
   return {
@@ -31,6 +31,17 @@ export class DrizzleCrawlRepository implements CrawlRepository {
 
   public async findById(id: string): Promise<Crawl | null> {
     const rows = await this.db.select().from(crawls).where(eq(crawls.id, id)).limit(1);
+    const row = rows[0];
+    return row === undefined ? null : mapCrawl(row);
+  }
+
+  public async findLatestCompleted(websiteId: string): Promise<Crawl | null> {
+    const rows = await this.db
+      .select()
+      .from(crawls)
+      .where(and(eq(crawls.websiteId, websiteId), eq(crawls.status, 'completed')))
+      .orderBy(desc(crawls.completedAt), desc(crawls.createdAt))
+      .limit(1);
     const row = rows[0];
     return row === undefined ? null : mapCrawl(row);
   }
