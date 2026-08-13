@@ -1,13 +1,13 @@
 # Project State
 
-Current stage: **A — Infrastructure Foundation** (PASS with local fallback infra).
+Current stage: **B — Website Intelligence** (PASS).
 
 Original 34-phase numbering is retained only as notes. Implementation stages:
 
 | Stage | Name | Status |
 | --- | --- | --- |
 | A | Infrastructure Foundation | PASS |
-| B | Website Intelligence | not started |
+| B | Website Intelligence | PASS |
 | C | Audit Engine | not started |
 | D | AI + Reporting | not started |
 | E | Business Discovery | not started |
@@ -15,52 +15,38 @@ Original 34-phase numbering is retained only as notes. Implementation stages:
 | G | Production | not started |
 | H | Commercialization | not started |
 
-## Stage A pass gate
+## Stage B pass gate
 
 ```text
-[x] pnpm install succeeds
-[!] docker compose up -d succeeds  — Docker Desktop installed; WSL upgrade needs admin (REGDB_E_CLASSNOTREG). Fallback used: embedded-postgres + portable Redis 5.
-[x] PostgreSQL accepts connections
-[x] Redis accepts connections
-[x] migrations apply successfully
-[x] seed succeeds
-[x] API starts
-[x] worker starts
-[x] web starts
-[x] GET /health returns PostgreSQL OK
-[x] GET /health returns Redis OK
-[x] Business can be created
-[x] Business can be listed
-[x] Business survives API restart
-[x] Worker can connect to Redis
-[x] lso:health:started_at exists
-[!] Redis MCP can read the key — `.cursor/mcp.json` uses `py -3 -m uv tool run --from redis-mcp-server==0.5.1 ...`; reload Cursor MCP; key verified via redis-cli as `2026-08-13T21:20:06.507Z`
-[x] lint passes
-[x] typecheck passes
-[x] unit tests pass
-[x] integration tests pass
-[x] production builds pass
+[x] security unit tests pass (normalizeUrl + SSRF; allowLocalhost opt-in)
+[x] typecheck/build pass
+[x] enqueue crawl returns 202
+[x] worker completes crawl (fixture http://127.0.0.1:4173/ with CRAWLER_ALLOW_LOCALHOST=true)
+[x] pages + evidence stored in Postgres (2 pages, page.seo evidence)
+[x] Playwright extract IIFE fix (string evaluate must invoke)
+[x] Chromium DNS MAP via Node lookup for public hosts
+[x] empty crawl fails the job (no silent COMPLETED with 0 pages)
+```
+
+## Stage A pass gate (retained)
+
+```text
+[x] pnpm install, migrate, seed, API/worker/web, health, CRUD, Redis health key
+[x] Docker Compose postgres:16 + redis:7 healthy after WSL recovery
 ```
 
 ## Local infra note (Windows)
 
-Preferred: `docker compose up -d` once WSL is fixed with an elevated `wsl --update` / `winget install Microsoft.WSL`.
+Preferred: `docker compose up -d` (working as of 2026-08-13 after WSL recovery).
 
-**Blocker:** Docker Desktop is installed, but WSL is broken (`REGDB_E_CLASSNOTREG`), so compose was not used for Stage A verification.
+Fallback remains: embedded-postgres + portable Redis under `tools/` / `data/` (gitignored).
 
-Temporary Stage A verification used (documented in README “Without Docker”):
-
-- `node scripts/setup/start-embedded-postgres.mjs`
-- `tools/redis/redis-server.exe` (tporadowski Redis 5.0.14)
-
-These are developer fallbacks only. Compose remains the contract.
-
-Follow-up (2026-08-13): `GET http://localhost:3001/health` still returned postgres + redis `ok` under that fallback.
+Dev crawl smoke: `node scripts/development/fixture-site.mjs` + `CRAWLER_ALLOW_LOCALHOST=true` (never enable against untrusted URLs).
 
 ## Phase notes (internal)
 
 - Stage A covers original phases 1–6 (environment, monorepo, config, domain, PostgreSQL, API health/CRUD).
-- Stage B: phases 7–9 (URL/SSRF, crawler, evidence) plus crawl job HTTP.
+- Stage B: phases 7–9 (URL/SSRF, crawler, evidence) plus crawl job HTTP — **done**.
 - Stage C: phases 10–15, 22 (rules, performance, aggregator, scoring, recommendations, workers).
 - Stage D: phases 16–18 (Ollama, AI safety, HTML/PDF reports).
 - Stage E: phases 19–21 (discovery, opportunity, dashboard).

@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "@lso/config": "workspace:*",
+    "@lso/database": "workspace:*",
     "@lso/logging": "workspace:*",
-    "@lso/queue": "workspace:*"
+    "@lso/queue": "workspace:*",
+    "@lso/repositories": "workspace:*",
+    "@lso/services": "workspace:*",
+    "bullmq": "^5.56.4"
   },
   "devDependencies": {
     "tsx": "^4.20.3"

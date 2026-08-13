@@ -7,6 +7,14 @@ export {
   type UpdateBusinessRequest,
 } from './business.js';
 export {
+  crawlDtoSchema,
+  enqueueCrawlRequestSchema,
+  jobDtoSchema,
+  type CrawlDto,
+  type EnqueueCrawlRequest,
+  type JobDto,
+} from './crawl.js';
+export {
   dependencyStatusSchema,
   healthResponseSchema,
   type HealthResponse,

@@ -12,6 +12,7 @@ describe('parseEnv', () => {
     expect(env.API_PORT).toBe(3001);
     expect(env.LOG_LEVEL).toBe('info');
     expect(env.CRAWLER_MAX_PAGES).toBe(100);
+    expect(env.CRAWLER_ALLOW_LOCALHOST).toBe(false);
   });
 
   it('rejects missing DATABASE_URL', () => {

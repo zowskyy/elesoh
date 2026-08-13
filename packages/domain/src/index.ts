@@ -23,4 +23,11 @@ export {
   type User,
   type Website,
 } from './entities.js';
-export type { BusinessRepository, JobRepository, WebsiteRepository } from './ports.js';
+export type {
+  BusinessRepository,
+  CrawlRepository,
+  JobRepository,
+  PageEvidenceWrite,
+  PageRepository,
+  WebsiteRepository,
+} from './ports.js';

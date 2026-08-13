@@ -1,6 +1,6 @@
 import { Queue } from 'bullmq';
 import { Redis } from 'ioredis';
-import { BULLMQ_PREFIX, REDIS_KEY } from './keys.js';
+import { BULLMQ_PREFIX, QUEUE_NAMES, REDIS_KEY } from './keys.js';
 
 export function createRedis(url: string): Redis {
   return new Redis(url, { maxRetriesPerRequest: null });
@@ -21,4 +21,4 @@ export function createQueue(name: string, redis: Redis): Queue {
   return new Queue(name, { connection: redis, prefix: BULLMQ_PREFIX });
 }
 
-export { BULLMQ_PREFIX, REDIS_KEY };
+export { BULLMQ_PREFIX, QUEUE_NAMES, REDIS_KEY };

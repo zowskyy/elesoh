@@ -1,5 +1,5 @@
 {
-  "name": "@lso/services",
+  "name": "@lso/crawler",
   "version": "0.1.0",
   "type": "module",
   "exports": {
@@ -11,8 +11,7 @@
   },
   "dependencies": {
     "@lso/config": "workspace:*",
-    "@lso/crawler": "workspace:*",
-    "@lso/domain": "workspace:*",
-    "bullmq": "^5.56.4"
+    "@lso/security": "workspace:*",
+    "playwright": "^1.54.2"
   }
 }

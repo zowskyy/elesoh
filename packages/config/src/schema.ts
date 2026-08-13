@@ -11,6 +11,10 @@ export const envSchema = z.object({
   CRAWLER_MAX_DEPTH: z.coerce.number().int().nonnegative().default(3),
   CRAWLER_CONCURRENCY: z.coerce.number().int().positive().default(2),
   CRAWLER_TIMEOUT: z.coerce.number().int().positive().default(10_000),
+  CRAWLER_ALLOW_LOCALHOST: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((value) => value === 'true'),
   AUDIT_TIMEOUT: z.coerce.number().int().positive().default(300_000),
   OLLAMA_URL: z.string().min(1).default('http://127.0.0.1:11434'),
   OLLAMA_MODEL: z.string().min(1).default('llama3.2'),

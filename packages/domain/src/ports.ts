@@ -1,5 +1,6 @@
 import type {
   Business,
+  Crawl,
   CreateBusinessInput,
   CreateJobInput,
   CreateWebsiteInput,
@@ -26,6 +27,31 @@ export interface WebsiteRepository {
 }
 
 export interface JobRepository {
+  findById(id: string): Promise<Job | null>;
   findByIdempotencyKey(key: string): Promise<Job | null>;
   create(input: CreateJobInput): Promise<Job>;
+  markRunning(id: string): Promise<Job>;
+  markCompleted(id: string): Promise<Job>;
+  markFailed(id: string, error: string): Promise<Job>;
+}
+
+export interface CrawlRepository {
+  create(websiteId: string): Promise<Crawl>;
+  findById(id: string): Promise<Crawl | null>;
+  markRunning(id: string): Promise<Crawl>;
+  markCompleted(id: string): Promise<Crawl>;
+  markFailed(id: string): Promise<Crawl>;
+}
+
+export interface PageEvidenceWrite {
+  url: string;
+  statusCode: number | null;
+  evidence: Record<string, unknown>;
+  headings: Array<{ level: number; text: string }>;
+  links: Array<{ href: string }>;
+  images: Array<{ src: string; alt: string | null }>;
+}
+
+export interface PageRepository {
+  insertExtractedPages(crawlId: string, pages: PageEvidenceWrite[]): Promise<number>;
 }
