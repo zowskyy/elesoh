@@ -1,0 +1,83 @@
+# Cloud stack — no local computer required.
+# Deploy with: render.yaml (recommended) or docker compose -f docker-compose.cloud.yml
+#
+# AI uses deterministic fallback narratives (no Ollama). Crawls run in the worker via Playwright.
+
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: lso
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-lso}
+      POSTGRES_DB: lso
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U lso -d lso"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/api.Dockerfile
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://lso:${POSTGRES_PASSWORD:-lso}@postgres:5432/lso
+      REDIS_URL: redis://redis:6379/0
+      API_PORT: "3001"
+      LOG_LEVEL: info
+      NODE_ENV: production
+      AI_ENABLED: "false"
+      REPORT_DIRECTORY: /app/reports
+      CRAWLER_ALLOW_LOCALHOST: "false"
+    volumes:
+      - reports_data:/app/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  worker:
+    build:
+      context: .
+      dockerfile: infrastructure/docker/worker.Dockerfile
+    environment:
+      DATABASE_URL: postgres://lso:${POSTGRES_PASSWORD:-lso}@postgres:5432/lso
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: info
+      NODE_ENV: production
+      AI_ENABLED: "false"
+      REPORT_DIRECTORY: /app/reports
+      CRAWLER_ALLOW_LOCALHOST: "false"
+      CRAWLER_MAX_PAGES: "50"
+      CRAWLER_CONCURRENCY: "2"
+    volumes:
+      - reports_data:/app/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  reports_data:

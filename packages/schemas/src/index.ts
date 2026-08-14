@@ -1,6 +1,12 @@
 export {
   analyzeRequestSchema,
+  batchAnalyzeItemSchema,
+  batchAnalyzeRequestSchema,
+  batchAnalyzeResponseSchema,
   type AnalyzeRequest,
+  type BatchAnalyzeItem,
+  type BatchAnalyzeRequest,
+  type BatchAnalyzeResponse,
 } from './analyze.js';
 export {
   auditDtoSchema,

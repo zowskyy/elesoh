@@ -6,6 +6,7 @@ import { AnalyzePage } from './pages/AnalyzePage';
 import { BusinessesPage } from './pages/BusinessesPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DiscoveryPage } from './pages/DiscoveryPage';
+import { HistoryPage } from './pages/HistoryPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { WebsitesPage } from './pages/WebsitesPage';
@@ -23,6 +24,7 @@ createRoot(root).render(
         <Route element={<AppShell />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/analyze" element={<AnalyzePage />} />
+          <Route path="/history" element={<HistoryPage />} />
           <Route path="/businesses" element={<BusinessesPage />} />
           <Route path="/websites" element={<WebsitesPage />} />
           <Route path="/discovery" element={<DiscoveryPage />} />

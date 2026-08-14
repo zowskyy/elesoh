@@ -6,14 +6,25 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "cap:sync": "pnpm build && cap sync android",
+    "cap:open": "cap open android",
+    "android:apk": "pnpm cap:sync && cd android && ./gradlew assembleDebug",
+    "android:apk:cloud": "VITE_CLOUD_API_URL=https://lso-optimizer-api.onrender.com pnpm build && cap sync android && cd android && ./gradlew assembleDebug",
+    "android:apk:release": "pnpm cap:sync && cd android && ./gradlew assembleRelease"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/app": "^7.0.2",
+    "@capacitor/browser": "^7.0.2",
+    "@capacitor/clipboard": "^7.0.2",
+    "@capacitor/core": "^7.4.2",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.7.1"
   },
   "devDependencies": {
+    "@capacitor/cli": "^7.4.2",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",

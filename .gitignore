@@ -21,3 +21,5 @@ apps/*/reports/
 tools/
 data/
 *.zip
+*.apk
+!releases/*.apk
