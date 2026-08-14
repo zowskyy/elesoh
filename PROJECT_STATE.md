@@ -1,6 +1,6 @@
 # Project State
 
-Current stage: **E — Business Discovery** (PASS).
+Current stage: **F — Agent/MCP Layer** (PASS).
 
 | Stage | Name | Status |
 | --- | --- | --- |
@@ -9,23 +9,21 @@ Current stage: **E — Business Discovery** (PASS).
 | C | Audit Engine | PASS |
 | D | AI + Reporting | PASS |
 | E | Business Discovery | PASS |
-| F | Agent/MCP Layer | not started |
+| F | Agent/MCP Layer | PASS |
 | G | Production | not started |
 | H | Commercialization | not started |
 
-## Stage E pass gate
+## Stage F pass gate
 
 ```text
-[x] packages/discovery (imported + OSM providers)
-[x] normalize / dedupe / website verify
-[x] opportunity score (worse site = higher opportunity)
-[x] DISCOVER_BUSINESSES job + discovery queue
-[x] POST /discoveries, GET /discoveries/:id, GET /opportunities
-[x] Web /discovery page
-[x] typecheck + 23 tests
-[x] smoke: imported discovery created=2 verified=1; opportunities ranked
+[x] apps/mcp on @modelcontextprotocol/server v2 (stdio)
+[x] product tools: list_businesses, get_business, enqueue_crawl, run_audit, get_audit, get_score, list_findings, list_opportunities, get_job
+[x] never execute_sql / fetch_any_url / Redis MCP surface
+[x] Zod 4 only in @lso/mcp (MCP peer); monorepo Zod 3 elsewhere
+[x] typecheck + allowlist unit test
+[x] smoke: registered tools match allowlist (9 tools)
 ```
 
 ## Next
 
-Stage F — product MCP tools (`get_audit`, `run_audit`, …).
+Stage G — Production (health live/ready, compose app stack, correlation IDs, smoke).
