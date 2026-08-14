@@ -1,12 +1,12 @@
-# Render blueprint — one-click cloud deploy (no local computer).
-# https://render.com/docs/blueprint-spec
-#
-# Setup from your phone or any browser:
-# 1. Push this repo to GitHub
-# 2. Open https://dashboard.render.com/blueprint/new
-# 3. Connect the repo — Render provisions Postgres, Redis, and the API+worker stack
-# 4. After deploy, API is at https://lso-optimizer-api.onrender.com
-# 5. Install the cloud APK — it defaults to that URL
+# Cloud hosting (paid Render — optional)
+
+Render’s free tier cannot run Playwright workers. This blueprint requires **Standard** (~$25/mo).
+
+For **$0 hosting**, use [cloud-hosting-free.md](./cloud-hosting-free.md) (Fly.io + Neon + Upstash, or Oracle Cloud).
+
+---
+
+# Render blueprint (paid)
 
 databases:
   - name: lso-db

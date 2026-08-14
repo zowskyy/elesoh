@@ -97,6 +97,13 @@ button {
   background: #fff;
 }
 
+.setup-card {
+  background: #fff;
+  border: 1px solid #ccc;
+  padding: 1.25rem;
+  max-width: 40rem;
+}
+
 .cloud-banner {
   background: #e8f4ea;
   border: 1px solid #1a7f37;

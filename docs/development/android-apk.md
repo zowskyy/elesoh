@@ -2,13 +2,11 @@
 
 Install the mobile app to analyze websites from your phone, including URLs pulled from Android browser history.
 
-## Cloud mode (recommended — no computer)
+## Cloud mode (recommended — no computer, $0)
 
-The APK defaults to the hosted API at `https://lso-optimizer-api.onrender.com`.
+Deploy a **free** backend (Fly.io + Neon + Upstash, or Oracle Cloud). See [cloud-hosting-free.md](./cloud-hosting-free.md).
 
-**One-time:** deploy the backend from your phone browser via [Render Blueprint](https://dashboard.render.com/blueprint/new) (see [cloud-hosting.md](./cloud-hosting.md)).
-
-Then install the APK and use **History** — no LAN IP, no `pnpm dev`, no Docker on your PC.
+No Render payment. After deploy, open **Settings** in the app and paste your API URL.
 
 ## Local mode (optional)
 

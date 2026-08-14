@@ -22,7 +22,7 @@ Current stage: **H — Commercialization** (PASS for customer path + plan catalo
 [x] Android APK with browser history batch analyze (Taylor workers)
 [x] typecheck + plan unit test
 [ ] Accounts / Stripe / schedules / API keys (explicitly deferred)
-[x] Cloud hosting blueprint (Render) — phone-only, no local computer
+[x] Cloud hosting blueprint — free Fly.io + Oracle paths (Render optional/paid)
 ```
 
 ## Next

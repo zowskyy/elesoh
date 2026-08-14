@@ -1,6 +1,6 @@
 import { useEffect, useState, type ReactElement } from 'react';
-import { api, getApiBaseUrl, isUsingCloudApi, resetApiBaseUrl, setApiBaseUrl } from '../api';
-import { DEFAULT_CLOUD_API_URL } from '../lib/cloud';
+import { Link } from 'react-router-dom';
+import { api, getApiBaseUrl, isApiConfigured, resetApiBaseUrl, setApiBaseUrl } from '../api';
 import { isNativeApp } from '../lib/mobile';
 
 interface PlanDto {
@@ -19,45 +19,46 @@ export function SettingsPage(): ReactElement {
   const [apiUrl, setApiUrl] = useState(() => getApiBaseUrl());
   const [apiSaved, setApiSaved] = useState<string | null>(null);
   const native = isNativeApp();
-  const cloud = isUsingCloudApi();
+  const configured = isApiConfigured();
 
   useEffect(() => {
+    if (!configured) return;
     api<PlanDto[]>('/plans')
       .then(setPlans)
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : 'failed to load plans');
       });
-  }, []);
+  }, [configured, apiSaved]);
 
   return (
     <section>
       <h2>Settings & plans</h2>
-      <p className="muted">
-        Billing, accounts, schedules, and API keys land after the customer audit path. Plans below
-        are the commercial catalog (not enforced yet).
-      </p>
       {native ? (
         <form
-          className="api-settings"
+          className="api-settings setup-card"
           onSubmit={(event) => {
             event.preventDefault();
             setApiBaseUrl(apiUrl);
             setApiSaved(apiUrl);
           }}
         >
-          <h3>API server</h3>
-          {cloud ? (
-            <p className="muted">
-              Using cloud API (default). No computer needed after one-time Render deploy.
-            </p>
-          ) : (
-            <p className="muted">Custom API URL (self-hosted or LAN).</p>
-          )}
+          <h3>Free cloud API URL</h3>
+          <p className="muted">
+            Deploy for $0 with{' '}
+            <a
+              href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/cloud-hosting-free.md"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Fly.io + Neon + Upstash
+            </a>{' '}
+            or Oracle Cloud. Paste your URL below — no Render payment needed.
+          </p>
           <div className="history-actions">
             <input
               value={apiUrl}
               onChange={(event) => setApiUrl(event.target.value)}
-              placeholder={DEFAULT_CLOUD_API_URL}
+              placeholder="https://lso-optimizer-you.fly.dev"
               style={{ flex: 1, minWidth: '16rem' }}
             />
             <button type="submit">Save API URL</button>
@@ -65,31 +66,44 @@ export function SettingsPage(): ReactElement {
               type="button"
               onClick={() => {
                 resetApiBaseUrl();
-                setApiUrl(DEFAULT_CLOUD_API_URL);
-                setApiSaved(DEFAULT_CLOUD_API_URL);
+                setApiUrl('');
+                setApiSaved(null);
               }}
             >
-              Use cloud default
+              Clear
             </button>
           </div>
           {apiSaved !== null ? <p className="muted">Saved: {apiSaved}</p> : null}
+          {!configured && apiSaved === null ? (
+            <p className="error">Save your cloud URL before using Analyze or History.</p>
+          ) : null}
         </form>
-      ) : null}
+      ) : (
+        <p className="muted">
+          Billing, accounts, schedules, and API keys land after the customer audit path.
+        </p>
+      )}
       {error !== null ? <p className="error">{error}</p> : null}
-      <div className="plan-grid">
-        {plans.map((plan) => (
-          <article key={plan.id} className="plan-card">
-            <h3>{plan.name}</h3>
-            <p className="score-overall">{plan.priceLabel}</p>
-            <ul>
-              <li>{plan.auditsPerMonth} audits / month</li>
-              <li>Discovery: {plan.discoveryEnabled ? 'yes' : 'no'}</li>
-              <li>API keys: {plan.apiKeys ? 'yes' : 'no'}</li>
-              <li>White-label: {plan.whiteLabel ? 'yes' : 'no'}</li>
-            </ul>
-          </article>
-        ))}
-      </div>
+      {configured ? (
+        <div className="plan-grid">
+          {plans.map((plan) => (
+            <article key={plan.id} className="plan-card">
+              <h3>{plan.name}</h3>
+              <p className="score-overall">{plan.priceLabel}</p>
+              <ul>
+                <li>{plan.auditsPerMonth} audits / month</li>
+                <li>Discovery: {plan.discoveryEnabled ? 'yes' : 'no'}</li>
+                <li>API keys: {plan.apiKeys ? 'yes' : 'no'}</li>
+                <li>White-label: {plan.whiteLabel ? 'yes' : 'no'}</li>
+              </ul>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <p>
+          <Link to="/">Back to setup guide</Link>
+        </p>
+      )}
     </section>
   );
 }

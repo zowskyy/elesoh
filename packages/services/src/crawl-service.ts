@@ -111,6 +111,7 @@ export class CrawlService {
         concurrency: this.env.CRAWLER_CONCURRENCY,
         navigationTimeoutMs: this.env.CRAWLER_TIMEOUT,
         allowLocalhost: this.env.CRAWLER_ALLOW_LOCALHOST,
+        engine: this.env.CRAWLER_ENGINE,
       });
 
       const pageCount = await this.pages.insertExtractedPages(

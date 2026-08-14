@@ -15,6 +15,7 @@ export const envSchema = z.object({
     .enum(['true', 'false'])
     .default('false')
     .transform((value) => value === 'true'),
+  CRAWLER_ENGINE: z.enum(['playwright', 'fetch']).default('playwright'),
   AUDIT_TIMEOUT: z.coerce.number().int().positive().default(300_000),
   AUDIT_RULESET_VERSION: z.string().min(1).default('seo-v1'),
   PERFORMANCE_ENABLED: z
