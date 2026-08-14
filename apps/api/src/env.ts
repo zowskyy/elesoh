@@ -1,6 +1,8 @@
+import type { Env } from '@lso/config';
 import type { Database } from '@lso/database';
 import type { Logger } from '@lso/logging';
 import type {
+  AnalyzeService,
   AuditService,
   BusinessService,
   CrawlService,
@@ -15,12 +17,14 @@ import type pg from 'pg';
 
 export type AppEnv = {
   Variables: {
+    env: Env;
     pool: pg.Pool;
     db: Database;
     redis: Redis;
     startedAt: string;
     requestId: string;
     logger: Logger;
+    analyzeService: AnalyzeService;
     businessService: BusinessService;
     websiteService: WebsiteService;
     jobService: JobService;

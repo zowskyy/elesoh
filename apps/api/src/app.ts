@@ -17,6 +17,7 @@ import {
   DrizzleWebsiteRepository,
 } from '@lso/repositories';
 import {
+  AnalyzeService,
   AuditService,
   BusinessService,
   CrawlService,
@@ -33,20 +34,24 @@ import type pg from 'pg';
 import type { AppEnv } from './env.js';
 import { errorHandler } from './middleware/error.js';
 import { createRequestContextMiddleware } from './middleware/request-context.js';
+import { registerAnalyzeRoutes } from './routes/analyze.js';
 import { registerAuditRoutes } from './routes/audits.js';
 import { registerBusinessRoutes } from './routes/businesses.js';
 import { registerCrawlRoutes } from './routes/crawls.js';
 import { registerDiscoveryRoutes } from './routes/discoveries.js';
 import { registerHealthRoutes } from './routes/health.js';
+import { registerPlanRoutes } from './routes/plans.js';
 import { registerReportRoutes } from './routes/reports.js';
 import { registerWebsiteRoutes } from './routes/websites.js';
 
 export interface ApiDependencies {
+  env: Env;
   pool: pg.Pool;
   db: Database;
   redis: Redis;
   startedAt: string;
   logger: Logger;
+  analyzeService: AnalyzeService;
   businessService: BusinessService;
   websiteService: WebsiteService;
   jobService: JobService;
@@ -65,10 +70,12 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
   app.use('*', cors());
   app.use('*', createRequestContextMiddleware(deps.logger));
   app.use('*', async (c, next) => {
+    c.set('env', deps.env);
     c.set('pool', deps.pool);
     c.set('db', deps.db);
     c.set('redis', deps.redis);
     c.set('startedAt', deps.startedAt);
+    c.set('analyzeService', deps.analyzeService);
     c.set('businessService', deps.businessService);
     c.set('websiteService', deps.websiteService);
     c.set('jobService', deps.jobService);
@@ -84,6 +91,8 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
   });
   app.onError(errorHandler);
   registerHealthRoutes(app);
+  registerPlanRoutes(app);
+  registerAnalyzeRoutes(app);
   registerBusinessRoutes(app);
   registerWebsiteRoutes(app);
   registerCrawlRoutes(app);
@@ -140,6 +149,12 @@ export function createApi(
     crawlQueue,
     env,
   );
+  const analyzeService = new AnalyzeService(
+    businessService,
+    websiteService,
+    crawlService,
+    websiteRepo,
+  );
   const auditService = new AuditService(
     websiteRepo,
     crawlRepo,
@@ -177,11 +192,13 @@ export function createApi(
     env,
   );
   const app = createApp({
+    env,
     pool,
     db,
     redis,
     startedAt,
     logger,
+    analyzeService,
     businessService,
     websiteService,
     jobService,

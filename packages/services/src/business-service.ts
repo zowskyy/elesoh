@@ -28,6 +28,10 @@ export class BusinessService {
     return this.businesses.listByOrganization(DEFAULT_ORGANIZATION_ID);
   }
 
+  public findByWebsiteUrl(websiteUrl: string): Promise<Business | null> {
+    return this.businesses.findByWebsiteUrl(DEFAULT_ORGANIZATION_ID, websiteUrl);
+  }
+
   public async getById(id: string): Promise<Business> {
     const business = await this.businesses.findById(id);
     if (business === null) {

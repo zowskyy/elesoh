@@ -1,4 +1,5 @@
 import { useEffect, useState, type ReactElement } from 'react';
+import { Link } from 'react-router-dom';
 import { api } from '../api';
 
 interface HealthResponse {
@@ -24,7 +25,9 @@ export function DashboardPage(): ReactElement {
   return (
     <section>
       <h2>Dashboard</h2>
-      <p>LocalSite Optimizer — crawl, audit, report, and discover local businesses.</p>
+      <p>
+        Customer path: <Link to="/analyze">Analyze a website</Link> (URL → score → top 10 → report).
+      </p>
       {error !== null ? <p className="error">{error}</p> : null}
       {health !== null ? (
         <dl>

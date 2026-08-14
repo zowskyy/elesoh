@@ -19,6 +19,7 @@
     "@lso/performance": "workspace:*",
     "@lso/reports": "workspace:*",
     "@lso/scoring": "workspace:*",
+    "@lso/security": "workspace:*",
     "bullmq": "^5.56.4"
   }
 }

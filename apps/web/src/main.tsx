@@ -2,10 +2,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AppShell } from './AppShell';
+import { AnalyzePage } from './pages/AnalyzePage';
 import { BusinessesPage } from './pages/BusinessesPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { DiscoveryPage } from './pages/DiscoveryPage';
 import { PlaceholderPage } from './pages/PlaceholderPage';
+import { SettingsPage } from './pages/SettingsPage';
 import { WebsitesPage } from './pages/WebsitesPage';
 import './styles.css';
 
@@ -20,6 +22,7 @@ createRoot(root).render(
       <Routes>
         <Route element={<AppShell />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/analyze" element={<AnalyzePage />} />
           <Route path="/businesses" element={<BusinessesPage />} />
           <Route path="/websites" element={<WebsitesPage />} />
           <Route path="/discovery" element={<DiscoveryPage />} />
@@ -27,7 +30,7 @@ createRoot(root).render(
           <Route path="/findings" element={<PlaceholderPage title="Findings" />} />
           <Route path="/reports" element={<PlaceholderPage title="Reports" />} />
           <Route path="/jobs" element={<PlaceholderPage title="Jobs" />} />
-          <Route path="/settings" element={<PlaceholderPage title="Settings" />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

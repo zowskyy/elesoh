@@ -24,6 +24,13 @@ export {
   type User,
   type Website,
 } from './entities.js';
+export {
+  DEFAULT_PLAN_ID,
+  PLANS,
+  listPlans,
+  type PlanDefinition,
+  type PlanId,
+} from './plans.js';
 export type {
   AuditRepository,
   BusinessRepository,

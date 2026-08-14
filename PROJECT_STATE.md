@@ -1,6 +1,6 @@
 # Project State
 
-Current stage: **G — Production** (PASS).
+Current stage: **H — Commercialization** (PASS for customer path + plan catalog).
 
 | Stage | Name | Status |
 | --- | --- | --- |
@@ -11,19 +11,18 @@ Current stage: **G — Production** (PASS).
 | E | Business Discovery | PASS |
 | F | Agent/MCP Layer | PASS |
 | G | Production | PASS |
-| H | Commercialization | not started |
+| H | Commercialization | PASS (path + plans; billing deferred) |
 
-## Stage G pass gate
+## Stage H pass gate
 
 ```text
-[x] GET /health/live + GET /health/ready (+ detailed /health)
-[x] correlation IDs (x-request-id) on API; worker job child loggers
-[x] docker compose: postgres + redis + ollama + api + worker + web
-[x] four test layers (unit, integration, e2e opt-in, smoke:prod)
-[x] typecheck + health/live/ready integration tests
-[x] hosting deferred until after V0.1 customer path (Stage H)
+[x] Customer path: URL → crawl → audit → score → top 10 → report
+[x] POST /analyze + GET /reports/:id/content
+[x] Free/Pro/Agency plan catalog (GET /plans); Settings page
+[x] typecheck + plan unit test
+[ ] Accounts / Stripe / schedules / API keys (explicitly deferred)
 ```
 
 ## Next
 
-Stage H — Commercialization (customer path, plans, accounts, billing).
+Optional: enforce plans, auth, billing; or ship V0.1 as-is with the analyze path.

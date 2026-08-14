@@ -1,7 +1,9 @@
 const apiUrl = import.meta.env.VITE_API_URL ?? 'http://localhost:3001';
 
+export const apiBaseUrl = apiUrl.replace(/\/$/, '');
+
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${apiUrl}${path}`, {
+  const response = await fetch(`${apiBaseUrl}${path}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',

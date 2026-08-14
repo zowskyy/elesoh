@@ -4,7 +4,7 @@ export function testEnv(): Env {
   return parseEnv({
     ...process.env,
     NODE_ENV: 'test',
-    LOG_LEVEL: process.env['LOG_LEVEL'] ?? 'silent',
+    LOG_LEVEL: 'silent',
   });
 }
 

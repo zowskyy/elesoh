@@ -1,3 +1,4 @@
+export { AnalyzeService } from './analyze-service.js';
 export {
   DISCOVER_JOB_NAME,
   DISCOVERY_QUEUE_NAME,

@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { dirname, isAbsolute, join, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { explainAudit } from '@lso/ai';
 import type { Env } from '@lso/config';
 import type {
@@ -109,6 +109,17 @@ export class ReportService {
       throw new NotFoundError(`Report not found: ${id}`);
     }
     return report;
+  }
+
+  public async resolveReportFile(id: string): Promise<{ report: Report; absolutePath: string }> {
+    const report = await this.getReport(id);
+    const root = resolveReportDirectory(this.env.REPORT_DIRECTORY);
+    const absolutePath = isAbsolute(report.path) ? resolve(report.path) : resolve(root, report.path);
+    const rel = relative(root, absolutePath);
+    if (rel.startsWith('..') || isAbsolute(rel)) {
+      throw new Error('Report path escapes report directory');
+    }
+    return { report, absolutePath };
   }
 
   public async listReports(auditId: string): Promise<Report[]> {

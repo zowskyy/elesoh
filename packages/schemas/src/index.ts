@@ -1,4 +1,8 @@
 export {
+  analyzeRequestSchema,
+  type AnalyzeRequest,
+} from './analyze.js';
+export {
   auditDtoSchema,
   enqueueAuditRequestSchema,
   findingDtoSchema,

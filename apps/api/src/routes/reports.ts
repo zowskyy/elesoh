@@ -1,4 +1,5 @@
 import { enqueueReportRequestSchema } from '@lso/schemas';
+import { readFile } from 'node:fs/promises';
 import type { Hono } from 'hono';
 import type { AppEnv } from '../env.js';
 import { toJobDto, toReportDto } from '../mappers.js';
@@ -30,5 +31,20 @@ export function registerReportRoutes(app: Hono<AppEnv>): void {
   app.get('/reports/:id', async (c) => {
     const report = await c.get('reportService').getReport(c.req.param('id'));
     return c.json(toReportDto(report));
+  });
+
+  app.get('/reports/:id/content', async (c) => {
+    const { report, absolutePath } = await c.get('reportService').resolveReportFile(c.req.param('id'));
+    const bytes = await readFile(absolutePath);
+    if (report.format === 'pdf') {
+      return c.body(bytes, 200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `inline; filename="${report.id}.pdf"`,
+      });
+    }
+    return c.body(bytes, 200, {
+      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Disposition': `inline; filename="${report.id}.html"`,
+    });
   });
 }

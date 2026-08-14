@@ -30,6 +30,7 @@ export interface BusinessRepository {
 export interface WebsiteRepository {
   create(input: CreateWebsiteInput): Promise<Website>;
   findById(id: string): Promise<Website | null>;
+  findByUrl(url: string): Promise<Website | null>;
   listByBusiness(businessId: string): Promise<Website[]>;
   update(id: string, input: UpdateWebsiteInput): Promise<Website>;
   delete(id: string): Promise<void>;

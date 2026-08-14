@@ -35,6 +35,12 @@ export class DrizzleWebsiteRepository implements WebsiteRepository {
     return row === undefined ? null : mapWebsite(row);
   }
 
+  public async findByUrl(url: string): Promise<Website | null> {
+    const rows = await this.db.select().from(websites).where(eq(websites.url, url)).limit(1);
+    const row = rows[0];
+    return row === undefined ? null : mapWebsite(row);
+  }
+
   public async listByBusiness(businessId: string): Promise<Website[]> {
     const rows = await this.db.select().from(websites).where(eq(websites.businessId, businessId));
     return rows.map(mapWebsite);

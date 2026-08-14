@@ -344,6 +344,9 @@ importers:
       '@lso/scoring':
         specifier: workspace:*
         version: link:../scoring
+      '@lso/security':
+        specifier: workspace:*
+        version: link:../security
       bullmq:
         specifier: ^5.56.4
         version: 5.81.3
