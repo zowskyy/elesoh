@@ -22,11 +22,10 @@ Current stage: **H — Commercialization** (PASS for customer path + plan catalo
 [x] Android APK with browser history batch analyze (Taylor workers)
 [x] typecheck + plan unit test
 [ ] Accounts / Stripe / schedules / API keys (explicitly deferred)
-[x] Cloud hosting blueprint — free Fly.io + Oracle paths (Render optional/paid)
 [x] Windows desktop launcher (Docker Postgres/Redis + auto-start + browser)
-[x] Cloud hosting docs (optional — Oracle/Fly/Render)
+[x] Cloud hosting docs (optional — Render/Fly/Oracle for phone-only use)
 ```
 
 ## Next
 
-Ship V0.1 with the free stack: [docs/development/free-stack-plan.md](docs/development/free-stack-plan.md). Optional: Supabase, auth, billing.
+Ship V0.1 with the Windows desktop path: [docs/development/windows-desktop.md](docs/development/windows-desktop.md). Optional: cloud hosting, Supabase, auth, billing.

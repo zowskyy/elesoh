@@ -1,4 +1,4 @@
-import { DEFAULT_CLOUD_API_URL } from './lib/cloud';
+import { DEFAULT_CLOUD_API_URL, isCloudApiUrl } from './lib/cloud';
 import { isNativeApp } from './lib/mobile';
 
 const STORAGE_KEY = 'lso_api_url';
@@ -36,8 +36,7 @@ export function resetApiBaseUrl(): void {
 }
 
 export function isUsingCloudApi(): boolean {
-  const url = getApiBaseUrl();
-  return url.length > 0 && !url.includes('localhost') && !url.includes('127.0.0.1') && !url.includes('10.0.2.2');
+  return isCloudApiUrl(getApiBaseUrl());
 }
 
 export const apiBaseUrl = getDefaultApiBaseUrl();
@@ -45,7 +44,7 @@ export const apiBaseUrl = getDefaultApiBaseUrl();
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const base = getApiBaseUrl();
   if (base.length === 0) {
-    throw new Error('API URL not configured. Open Settings and enter your free cloud URL.');
+    throw new Error('API URL not configured. Open Settings and enter your cloud URL.');
   }
   const response = await fetch(`${base}${path}`, {
     ...init,

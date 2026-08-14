@@ -2,13 +2,25 @@
 
 Install the mobile app to analyze websites from your phone, including URLs pulled from Android browser history.
 
-## Cloud mode (recommended — no computer, $0)
+## Windows desktop (recommended — no cloud)
 
-Deploy a **free** backend (Fly.io + Neon + Upstash, or Oracle Cloud). See [cloud-hosting-free.md](./cloud-hosting-free.md).
+Run everything on your PC with Docker. See [windows-desktop.md](./windows-desktop.md).
 
-No Render payment. After deploy, open **Settings** in the app and paste your API URL.
+Double-click **`Install LocalSite Optimizer.bat`** once, then **`LocalSite Optimizer.bat`** daily. The app opens at http://localhost:3000.
 
-## Local mode (optional)
+For phone access on the same Wi‑Fi, set `VITE_API_URL=http://YOUR_PC_IP:3001` before building the APK.
+
+## Cloud mode (optional — phone only, no PC)
+
+Deploy a free backend (Supabase + Upstash + Render/Koyeb). See [no-card-hosting.md](./no-card-hosting.md).
+
+After deploy, open **Settings** in the app and paste your API URL. Or rebuild with:
+
+```bash
+VITE_CLOUD_API_URL=https://your-api.onrender.com pnpm --filter @lso/web android:apk:cloud
+```
+
+## Local LAN mode (optional)
 
 If you self-host on your computer instead:
 
@@ -40,6 +52,8 @@ pnpm --filter @lso/web android:apk
 APK output:
 
 `apps/web/android/app/build/outputs/apk/debug/app-debug.apk`
+
+Or download a prebuilt APK from `releases/LocalSiteOptimizer-debug.apk` in this repo.
 
 Transfer to your phone and install (enable “Install unknown apps” if prompted).
 

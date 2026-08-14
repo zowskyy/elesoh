@@ -1,6 +1,7 @@
 import { useEffect, useState, type ReactElement } from 'react';
 import { Link } from 'react-router-dom';
 import { api, getApiBaseUrl, isApiConfigured, resetApiBaseUrl, setApiBaseUrl } from '../api';
+import { DEFAULT_CLOUD_API_URL } from '../lib/cloud';
 import { isNativeApp } from '../lib/mobile';
 
 interface PlanDto {
@@ -45,7 +46,11 @@ export function SettingsPage(): ReactElement {
           <h3>Cloud API URL</h3>
           <p className="muted">
             After{' '}
-            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/no-card-hosting.md" target="_blank" rel="noreferrer">
+            <a
+              href="https://github.com/zowskyy/elesoh/blob/cursor/stage-a-infrastructure-foundation/docs/development/no-card-hosting.md"
+              target="_blank"
+              rel="noreferrer"
+            >
               no-card deploy
             </a>{' '}
             (Supabase + Upstash + Render/Koyeb).
@@ -58,16 +63,29 @@ export function SettingsPage(): ReactElement {
               style={{ flex: 1, minWidth: '16rem' }}
             />
             <button type="submit">Save API URL</button>
-            <button
-              type="button"
-              onClick={() => {
-                resetApiBaseUrl();
-                setApiUrl('');
-                setApiSaved(null);
-              }}
-            >
-              Clear
-            </button>
+            {DEFAULT_CLOUD_API_URL !== '' ? (
+              <button
+                type="button"
+                onClick={() => {
+                  resetApiBaseUrl();
+                  setApiUrl(DEFAULT_CLOUD_API_URL);
+                  setApiSaved(DEFAULT_CLOUD_API_URL);
+                }}
+              >
+                Use cloud default
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  resetApiBaseUrl();
+                  setApiUrl('');
+                  setApiSaved(null);
+                }}
+              >
+                Clear
+              </button>
+            )}
           </div>
           {apiSaved !== null ? <p className="muted">Saved: {apiSaved}</p> : null}
           {!configured && apiSaved === null ? (
@@ -76,7 +94,8 @@ export function SettingsPage(): ReactElement {
         </form>
       ) : (
         <p className="muted">
-          Billing, accounts, schedules, and API keys land after the customer audit path.
+          Billing, accounts, schedules, and API keys land after the customer audit path. Plans below
+          are the commercial catalog (not enforced yet).
         </p>
       )}
       {error !== null ? <p className="error">{error}</p> : null}
@@ -95,11 +114,11 @@ export function SettingsPage(): ReactElement {
             </article>
           ))}
         </div>
-      ) : (
+      ) : native ? (
         <p>
           <Link to="/">Back to setup guide</Link>
         </p>
-      )}
+      ) : null}
     </section>
   );
 }

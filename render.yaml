@@ -1,0 +1,59 @@
+# Render blueprint — one-click cloud deploy (no local computer).
+# https://render.com/docs/blueprint-spec
+#
+# Setup from your phone or any browser:
+# 1. Push this repo to GitHub
+# 2. Open https://dashboard.render.com/blueprint/new
+# 3. Connect the repo — Render provisions Postgres, Redis, and the API+worker stack
+# 4. After deploy, API is at https://lso-optimizer-api.onrender.com
+# 5. Install the cloud APK — it defaults to that URL
+
+databases:
+  - name: lso-db
+    plan: free
+    databaseName: lso
+    user: lso
+
+services:
+  - type: redis
+    name: lso-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+    ipAllowList: []
+
+  - type: web
+    name: lso-optimizer-api
+    runtime: docker
+    plan: standard
+    region: oregon
+    dockerfilePath: ./infrastructure/docker/cloud.Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    disk:
+      name: lso-reports
+      mountPath: /app/reports
+      sizeGB: 1
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: lso-db
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: lso-redis
+          property: connectionString
+      - key: API_PORT
+        value: "3001"
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: AI_ENABLED
+        value: "false"
+      - key: REPORT_DIRECTORY
+        value: /app/reports
+      - key: CRAWLER_ALLOW_LOCALHOST
+        value: "false"
+      - key: CRAWLER_MAX_PAGES
+        value: "50"

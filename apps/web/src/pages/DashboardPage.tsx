@@ -12,7 +12,7 @@ interface HealthResponse {
 }
 
 const NO_CARD_GUIDE =
-  'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/no-card-hosting.md';
+  'https://github.com/zowskyy/elesoh/blob/cursor/stage-a-infrastructure-foundation/docs/development/no-card-hosting.md';
 
 export function DashboardPage(): ReactElement {
   const [health, setHealth] = useState<HealthResponse | null>(null);
@@ -33,9 +33,10 @@ export function DashboardPage(): ReactElement {
   if (native && !configured) {
     return (
       <section className="setup-card">
-        <h2>Free stack — no credit card</h2>
+        <h2>Cloud API setup</h2>
         <p className="muted">
-          Supabase + Upstash (you have these) + Render or Koyeb free host. No Fly.io, no Oracle, no card.
+          For phone-only use, deploy a free backend and paste the URL in Settings. See the no-card
+          hosting guide.
         </p>
         <p>
           <a href={NO_CARD_GUIDE} target="_blank" rel="noreferrer">
@@ -45,8 +46,8 @@ export function DashboardPage(): ReactElement {
         <h3>Quick setup</h3>
         <ol>
           <li>
-            Copy <strong>DATABASE_URL</strong> (Supabase) and <strong>REDIS_URL</strong> (Upstash) from each
-            dashboard
+            Copy <strong>DATABASE_URL</strong> (Supabase) and <strong>REDIS_URL</strong> (Upstash)
+            from each dashboard
           </li>
           <li>
             Deploy on{' '}
@@ -71,9 +72,17 @@ export function DashboardPage(): ReactElement {
   return (
     <section>
       <h2>Dashboard</h2>
-      {native && cloud ? (
+      {native ? (
         <p className="cloud-banner">
-          <strong>Free cloud</strong> — {getApiBaseUrl()}. $0, no card.
+          {cloud ? (
+            <>
+              <strong>Cloud mode</strong> — connected to {getApiBaseUrl()}. No computer required.
+            </>
+          ) : (
+            <>
+              <strong>Custom API</strong> — {getApiBaseUrl()}
+            </>
+          )}
         </p>
       ) : null}
       <p>
@@ -87,8 +96,8 @@ export function DashboardPage(): ReactElement {
       </p>
       {error !== null ? (
         <p className="error">
-          {error}. Free hosts sleep when idle — wait 30s and retry. Check{' '}
-          <Link to="/settings">Settings</Link>.
+          {error}. {cloud ? 'Free hosts sleep when idle — wait 30s and retry. ' : null}
+          Check <Link to="/settings">Settings</Link>.
         </p>
       ) : null}
       {health !== null ? (
