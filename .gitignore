@@ -22,3 +22,4 @@ tools/
 data/
 *.zip
 *.apk
+!releases/*.apk
