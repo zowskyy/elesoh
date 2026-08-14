@@ -17,7 +17,8 @@
     "db:migrate": "pnpm --filter @lso/database migrate",
     "db:seed": "pnpm --filter @lso/database seed",
     "smoke:prod": "node scripts/development/smoke-production.mjs",
-    "android:apk": "pnpm --filter @lso/web android:apk"
+    "android:apk": "pnpm --filter @lso/web android:apk",
+    "android:apk:cloud": "pnpm --filter @lso/web android:apk:cloud"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

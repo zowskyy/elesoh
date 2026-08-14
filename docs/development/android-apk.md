@@ -2,15 +2,17 @@
 
 Install the mobile app to analyze websites from your phone, including URLs pulled from Android browser history.
 
-## Prerequisites
+## Cloud mode (recommended — no computer)
 
-- Node.js 22+, pnpm 10+
-- Android Studio or Android SDK (API 34+)
-- Running API + worker stack reachable from your phone
+The APK defaults to the hosted API at `https://lso-optimizer-api.onrender.com`.
 
-## Configure API URL
+**One-time:** deploy the backend from your phone browser via [Render Blueprint](https://dashboard.render.com/blueprint/new) (see [cloud-hosting.md](./cloud-hosting.md)).
 
-The phone cannot reach `localhost`. Set your LAN or deployed API URL before building:
+Then install the APK and use **History** — no LAN IP, no `pnpm dev`, no Docker on your PC.
+
+## Local mode (optional)
+
+If you self-host on your computer instead:
 
 ```bash
 export VITE_API_URL=http://192.168.1.50:3001

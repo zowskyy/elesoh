@@ -1,5 +1,15 @@
+import { DEFAULT_CLOUD_API_URL, isCloudApiUrl } from './lib/cloud';
+import { isNativeApp } from './lib/mobile';
+
 const STORAGE_KEY = 'lso_api_url';
 const buildTimeApiUrl = (import.meta.env.VITE_API_URL ?? 'http://localhost:3001').replace(/\/$/, '');
+
+export function getDefaultApiBaseUrl(): string {
+  if (isNativeApp()) {
+    return DEFAULT_CLOUD_API_URL;
+  }
+  return buildTimeApiUrl;
+}
 
 export function getApiBaseUrl(): string {
   if (typeof window !== 'undefined') {
@@ -8,7 +18,7 @@ export function getApiBaseUrl(): string {
       return stored.replace(/\/$/, '');
     }
   }
-  return buildTimeApiUrl;
+  return getDefaultApiBaseUrl();
 }
 
 export function setApiBaseUrl(url: string): void {
@@ -16,7 +26,16 @@ export function setApiBaseUrl(url: string): void {
   window.localStorage.setItem(STORAGE_KEY, url.replace(/\/$/, ''));
 }
 
-export const apiBaseUrl = buildTimeApiUrl;
+export function resetApiBaseUrl(): void {
+  if (typeof window === 'undefined') return;
+  window.localStorage.removeItem(STORAGE_KEY);
+}
+
+export function isUsingCloudApi(): boolean {
+  return isCloudApiUrl(getApiBaseUrl());
+}
+
+export const apiBaseUrl = getDefaultApiBaseUrl();
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${getApiBaseUrl()}${path}`, {
