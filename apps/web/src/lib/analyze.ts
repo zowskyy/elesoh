@@ -1,4 +1,4 @@
-import { api, apiBaseUrl } from '../api';
+import { api, getApiBaseUrl } from '../api';
 
 export interface JobDto {
   id: string;
@@ -156,7 +156,7 @@ export async function runSingleAnalyze(
   await waitForJob(reportJob.job.id, 'Report', onStatus);
   const reports = await api<ReportDto[]>(`/audits/${auditEnqueue.audit.id}/reports`);
   const html = reports.find((report) => report.format === 'html') ?? reports[0];
-  const reportUrl = html !== undefined ? `${apiBaseUrl}/reports/${html.id}/content` : null;
+  const reportUrl = html !== undefined ? `${getApiBaseUrl()}/reports/${html.id}/content` : null;
   onStatus('Done');
 
   return {
@@ -178,5 +178,5 @@ export async function pollBatchAnalyze(batchId: string): Promise<BatchAnalyzeRes
 }
 
 export function reportContentUrl(reportId: string): string {
-  return `${apiBaseUrl}/reports/${reportId}/content`;
+  return `${getApiBaseUrl()}/reports/${reportId}/content`;
 }
