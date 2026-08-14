@@ -13,6 +13,8 @@
     "test": "vitest run",
     "build": "pnpm -r --if-present build",
     "dev": "pnpm run --parallel --filter @lso/api --filter @lso/web --filter @lso/worker dev",
+    "desktop:install": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/windows/Install-LocalSiteOptimizer.ps1",
+    "desktop:start": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/windows/Start-LocalSiteOptimizer.ps1",
     "db:generate": "pnpm --filter @lso/database generate",
     "db:migrate": "pnpm --filter @lso/database migrate",
     "db:seed": "pnpm --filter @lso/database seed",

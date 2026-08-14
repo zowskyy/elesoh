@@ -13,7 +13,22 @@ This repository currently implements Stage A only: config, domain, database, que
 - Docker
 - (Developer Redis MCP) `uv` / `uvx` for `redis-mcp-server==0.5.1`
 
-## Quick start
+## Quick start (Windows desktop — recommended)
+
+Personal use: everything local, no cloud. See [docs/development/windows-desktop.md](docs/development/windows-desktop.md).
+
+1. Install Node 22+ and Docker Desktop
+2. Double-click **`Install LocalSite Optimizer.bat`** (once)
+3. Double-click **`LocalSite Optimizer.bat`** (starts server + opens http://localhost:3000)
+
+Or from PowerShell:
+
+```powershell
+pnpm desktop:install   # once
+pnpm desktop:start     # daily
+```
+
+## Quick start (developers)
 
 ```powershell
 Copy-Item .env.example .env
