@@ -1,181 +1,104 @@
-# Free stack plan — $0 on your end (no Oracle)
+# Free stack plan — $0, no credit card
 
-Everything stays on **free tiers**. No Oracle, no Render, no home computer, no monthly bill.
+No Oracle. No Fly.io (card). No home computer. Uses **Supabase + Upstash** (you already have these) plus a **free host that doesn't ask for a card**.
 
 ---
 
-## Recommended architecture
-
-Managed free services + Fly.io for the app. Your phone runs the APK.
+## Architecture
 
 ```text
 ┌─────────────────────┐         ┌─────────────────────────────────────────┐
-│  Android phone      │  HTTPS  │  Fly.io (free allowance, $0)            │
-│  LocalSite APK      │ ──────► │  API + Taylor workers (fetch crawler)   │
+│  Android phone      │  HTTPS  │  Render free OR Koyeb free ($0, no card)│
+│  LocalSite APK      │ ──────► │  API + workers (fetch crawler)          │
 └─────────────────────┘         └──────────────┬──────────────────────────┘
                                                │
-                    ┌──────────────────────────┼──────────────────────────┐
-                    │                          │                          │
-                    ▼                          ▼                          ▼
-            ┌───────────────┐          ┌───────────────┐          ┌───────────────┐
-            │  Supabase     │          │  Upstash      │          │  Fly volume   │
-            │  Postgres $0  │          │  Redis $0     │          │  reports $0   │
-            └───────────────┘          └───────────────┘          └───────────────┘
+                    ┌──────────────────────────┴──────────────────────────┐
+                    ▼                          ▼                          │
+            ┌───────────────┐          ┌───────────────┐                  │
+            │  Supabase     │          │  Upstash      │                  │
+            │  Postgres $0  │          │  Redis $0     │                  │
+            └───────────────┘          └───────────────┘                  │
 ```
 
-| Piece | Service | Cost |
-|-------|---------|------|
-| Postgres | [Supabase](https://supabase.com) (or [Neon](https://neon.tech)) | $0 |
-| Redis queue | [Upstash](https://upstash.com) | $0 |
-| API + workers | [Fly.io](https://fly.io) | $0 (within free allowance) |
-| HTTPS URL | `https://your-app.fly.dev` | $0 |
-| Crawler | HTTP fetch (fits 512 MB RAM) | $0 |
-| AI reports | Deterministic fallback | $0 |
-| Android app | APK sideload | $0 |
-
-**Total: $0/month**
-
-> **Trade-off vs Oracle:** fetch crawler instead of Playwright — SEO audits still run, but no headless Chrome (some JS-heavy sites may score differently).
+| Piece | Service | Card? | Cost |
+|-------|---------|-------|------|
+| Postgres | **Supabase** (you have) | No | $0 |
+| Redis | **Upstash** (you have) | No | $0 |
+| API + workers | **Render free** or **Koyeb free** | **No** | $0 |
+| Phone app | APK | No | $0 |
 
 ---
 
-## One-time setup checklist
+## Quick start (you're halfway done)
 
-~30 min total (mostly browser + one terminal session).
+You already created Supabase + Upstash. Finish in ~20 min:
 
-### Phase 1 — Free accounts (browser, ~10 min)
+### 1. Get full connection strings
 
-Do all of this from your phone or laptop browser:
+See [no-card-hosting.md](./no-card-hosting.md) — you need passwords from each dashboard.
 
-**1. Supabase Postgres**
-- [ ] https://supabase.com → sign up → New project
-- [ ] **Settings → Database → Connection string → URI** (Session mode)
-- [ ] Copy URL, add `?sslmode=require` if missing
-
-**2. Upstash Redis**
-- [ ] https://upstash.com → sign up → Create database
-- [ ] Copy **Redis URL** (`rediss://...`)
-
-**3. Fly.io**
-- [ ] https://fly.io → sign up (card may be required for verification; stay within free limits = $0)
-
-Guide for Supabase URL format: [supabase.md](./supabase.md)
-
-### Phase 2 — Deploy to Fly (terminal once, ~15 min)
-
-Use any terminal once — laptop, library PC, or [GitHub Codespaces](https://github.com/codespaces) (free):
+### 2. Migrate database (once)
 
 ```bash
+export DATABASE_URL='postgresql://postgres:PASSWORD@db.ycpppvzfmwirfjzwzmzd.supabase.co:5432/postgres?sslmode=require'
 git clone -b cursor/android-apk-browser-history-5128 https://github.com/zowskyy/elesoh
-cd elesoh
-
-# Pick a unique app name (letters, numbers, hyphens)
-export FLY_APP_NAME=lso-optimizer-YOURNAME
-export DATABASE_URL='postgresql://postgres:PASSWORD@db.PROJECT.supabase.co:5432/postgres?sslmode=require'
-export REDIS_URL='rediss://default:PASSWORD@REGION.upstash.io:6379'
-
-bash scripts/deploy/fly-free-deploy.sh
+cd elesoh && pnpm install && pnpm db:migrate
 ```
 
-Or manually:
+### 3. Deploy app (no card)
 
-```bash
-fly auth login
-fly apps create lso-optimizer-YOURNAME
-fly volumes create lso_reports --size 1 --region iad -a lso-optimizer-YOURNAME --yes
-fly secrets set DATABASE_URL="..." REDIS_URL="..." -a lso-optimizer-YOURNAME
-fly deploy -a lso-optimizer-YOURNAME
-```
+**Render (easiest):** https://dashboard.render.com → Web Service → Docker → set `DATABASE_URL` + `REDIS_URL`
 
-Run migrations (first deploy usually handles via container startup, or run locally):
+Uses `render.free.yaml` in the repo.
 
-```bash
-export DATABASE_URL='...'
-pnpm db:migrate
-```
+**Or Koyeb:** https://app.koyeb.com → GitHub → Dockerfile `infrastructure/docker/cloud-lite.Dockerfile`
 
-Your API URL: **`https://lso-optimizer-YOURNAME.fly.dev`**
+Full steps: [no-card-hosting.md](./no-card-hosting.md)
 
-### Phase 3 — Phone (~5 min)
+### 4. Phone
 
-- [ ] Install APK:  
-  https://github.com/zowskyy/elesoh/raw/cursor/android-apk-browser-history-5128/releases/LocalSiteOptimizer-debug.apk
-- [ ] Test in Chrome: `https://lso-optimizer-YOURNAME.fly.dev/health`
-- [ ] App → **Settings** → paste Fly URL → **Save**
-- [ ] **History** → select sites → **Analyze**
-
-**Done.** No computer needed after Phase 2.
+- APK: https://github.com/zowskyy/elesoh/raw/cursor/android-apk-browser-history-5128/releases/LocalSiteOptimizer-debug.apk
+- **Settings** → your Render/Koyeb HTTPS URL → Save
+- **History** → Analyze
 
 ---
 
-## Free tier limits
+## Free tier behavior
 
-| Service | Limit | What it means |
-|---------|-------|---------------|
-| Fly.io | Machine sleeps when idle | First request after sleep ~15–30s wake |
-| Fly.io | 512 MB RAM on free/small VMs | Enough for fetch crawler |
-| Supabase | 500 MB DB, 2 projects | Fine for personal use |
-| Supabase | May pause after inactivity | Wake from dashboard |
-| Upstash | 10k commands/day free | OK for moderate batch use |
-| Neon (alt) | 0.5 GB, may pause | Same idea as Supabase |
+| Host | Sleep? | Wake time |
+|------|--------|-----------|
+| Render free | After ~15 min idle | ~30s |
+| Koyeb free | After ~1 hr idle | ~15–30s |
+
+First request after sleep feels slow — normal on free tiers.
 
 ---
 
-## Daily use
+## Alternatives
 
-1. Open APK (any network)
-2. **History** or **Analyze**
-3. If app feels slow first time, wait ~30s (Fly waking up)
-
----
-
-## Maintenance
-
-```bash
-fly logs -a lso-optimizer-YOURNAME
-fly deploy -a lso-optimizer-YOURNAME          # update
-fly secrets set DATABASE_URL="..." -a ...     # rotate credentials
-```
-
-Browse crawl/audit data in **Supabase Table Editor**.
+| Path | Card? | Notes |
+|------|-------|-------|
+| Render free | No | Recommended |
+| Koyeb free | Usually no | Docker from GitHub |
+| Termux on phone | No | No cloud host; see no-card-hosting.md |
+| Fly.io | Yes | Skipped |
+| Oracle VM | No | Skipped (you don't want Oracle) |
 
 ---
 
-## Alternatives (still $0)
-
-| If you… | Use |
-|---------|-----|
-| Prefer Neon over Supabase | Same steps — swap `DATABASE_URL` |
-| Want Playwright (heavier) | Oracle VM — see [oracle-cloud.md](./oracle-cloud.md) (optional) |
-| Want to self-host on PC | `docker compose up` on LAN (not phone-only) |
-
----
-
-## What we skip
-
-| Skipped | Why |
-|---------|-----|
-| Oracle | You chose not to use it |
-| Render | ~$25/mo |
-| Home PC 24/7 | Fly handles it |
-| Ollama / GPU | Fallback narratives |
-
----
-
-## Files in this repo
+## Files
 
 | File | Purpose |
 |------|---------|
-| `fly.toml` | Fly.io app config |
+| `render.free.yaml` | Render free deploy blueprint |
 | `infrastructure/docker/cloud-lite.Dockerfile` | Small image, fetch crawler |
-| `scripts/deploy/fly-free-deploy.sh` | One-command Fly deploy |
-| `docs/development/supabase.md` | Supabase Postgres details |
-| `releases/LocalSiteOptimizer-debug.apk` | Phone app |
+| `docs/development/no-card-hosting.md` | Step-by-step with your Supabase/Upstash |
+| `docs/development/supabase.md` | Supabase details |
 
 ---
 
 ## Summary
 
-**Plan:** Supabase + Upstash + Fly.io + APK = **$0/month**, no Oracle, no home computer.
+**Plan:** Your Supabase + Your Upstash + Render/Koyeb (no card) + APK = **$0**.
 
-**Next step:** Create Supabase + Upstash accounts (Phase 1), then run `fly-free-deploy.sh` (Phase 2).
+**Next:** [no-card-hosting.md](./no-card-hosting.md) → deploy on Render.

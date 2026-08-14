@@ -1,0 +1,34 @@
+# Render — free web service (no credit card).
+# Connect GitHub repo in Render dashboard, or use Blueprint.
+# Set DATABASE_URL and REDIS_URL in the dashboard (from Supabase + Upstash).
+
+services:
+  - type: web
+    name: lso-optimizer
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./infrastructure/docker/cloud-lite.Dockerfile
+    dockerContext: .
+    healthCheckPath: /health/live
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: info
+      - key: AI_ENABLED
+        value: 'false'
+      - key: REPORT_DIRECTORY
+        value: /tmp/reports
+      - key: CRAWLER_ALLOW_LOCALHOST
+        value: 'false'
+      - key: CRAWLER_ENGINE
+        value: fetch
+      - key: CRAWLER_MAX_PAGES
+        value: '30'
+      - key: API_PORT
+        value: '3001'
+      - key: DATABASE_URL
+        sync: false
+      - key: REDIS_URL
+        sync: false

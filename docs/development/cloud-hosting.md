@@ -1,13 +1,12 @@
 # Cloud hosting
 
-**Start here:** [free-stack-plan.md](./free-stack-plan.md) — **$0 stack: Supabase + Upstash + Fly.io** (no Oracle).
+**Start here:** [no-card-hosting.md](./no-card-hosting.md) — Supabase + Upstash + Render/Koyeb, **no credit card**.
 
 | Doc | When |
 |-----|------|
-| [free-stack-plan.md](./free-stack-plan.md) | Master plan — all free |
-| [supabase.md](./supabase.md) | Supabase Postgres setup |
-| [fly-deploy.md](./fly-deploy.md) | Fly.io deploy details |
-| [oracle-cloud.md](./oracle-cloud.md) | Optional — only if you want Playwright on a VM |
-| [android-apk.md](./android-apk.md) | Install APK |
+| [no-card-hosting.md](./no-card-hosting.md) | **Main guide** — no card |
+| [free-stack-plan.md](./free-stack-plan.md) | Architecture overview |
+| [supabase.md](./supabase.md) | Supabase Postgres |
+| [fly-deploy.md](./fly-deploy.md) | Fly.io (requires card — optional) |
+| [oracle-cloud.md](./oracle-cloud.md) | Oracle VM (optional) |
 
-Paid optional: `render.paid.yaml` — not needed.

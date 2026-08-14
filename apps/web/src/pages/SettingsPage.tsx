@@ -42,19 +42,19 @@ export function SettingsPage(): ReactElement {
             setApiSaved(apiUrl);
           }}
         >
-          <h3>Fly.io API URL</h3>
+          <h3>Cloud API URL</h3>
           <p className="muted">
             After{' '}
-            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/free-stack-plan.md" target="_blank" rel="noreferrer">
-              free stack setup
+            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/no-card-hosting.md" target="_blank" rel="noreferrer">
+              no-card deploy
             </a>{' '}
-            (Supabase + Upstash + Fly), paste your URL.
+            (Supabase + Upstash + Render/Koyeb).
           </p>
           <div className="history-actions">
             <input
               value={apiUrl}
               onChange={(event) => setApiUrl(event.target.value)}
-              placeholder="https://lso-optimizer-you.fly.dev"
+              placeholder="https://lso-optimizer.onrender.com"
               style={{ flex: 1, minWidth: '16rem' }}
             />
             <button type="submit">Save API URL</button>

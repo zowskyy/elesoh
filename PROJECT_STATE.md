@@ -23,7 +23,7 @@ Current stage: **H — Commercialization** (PASS for customer path + plan catalo
 [x] typecheck + plan unit test
 [ ] Accounts / Stripe / schedules / API keys (explicitly deferred)
 [x] Cloud hosting blueprint — free Fly.io + Oracle paths (Render optional/paid)
-[x] Free stack plan — Supabase + Upstash + Fly.io $0/mo (no Oracle)
+[x] Free stack plan — Supabase + Upstash + no-card host (Render/Koyeb)
 ```
 
 ## Next
