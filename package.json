@@ -15,7 +15,8 @@
     "dev": "pnpm run --parallel --filter @lso/api --filter @lso/web --filter @lso/worker dev",
     "db:generate": "pnpm --filter @lso/database generate",
     "db:migrate": "pnpm --filter @lso/database migrate",
-    "db:seed": "pnpm --filter @lso/database seed"
+    "db:seed": "pnpm --filter @lso/database seed",
+    "smoke:prod": "node scripts/development/smoke-production.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",

@@ -18,7 +18,7 @@ This repository currently implements Stage A only: config, domain, database, que
 ```powershell
 Copy-Item .env.example .env
 pnpm install
-docker compose up -d
+docker compose up -d postgres redis
 pnpm db:migrate
 pnpm db:seed
 pnpm dev
@@ -26,6 +26,14 @@ pnpm dev
 
 - Web: http://localhost:3000
 - API health: http://localhost:3001/health
+- Live / ready: http://localhost:3001/health/live · http://localhost:3001/health/ready
+
+Full stack (api + worker + web + ollama images):
+
+```powershell
+docker compose up -d --build
+pnpm smoke:prod
+```
 
 ### Without Docker (local fallback)
 

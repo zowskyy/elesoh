@@ -1,6 +1,6 @@
 # Project State
 
-Current stage: **F — Agent/MCP Layer** (PASS).
+Current stage: **G — Production** (PASS).
 
 | Stage | Name | Status |
 | --- | --- | --- |
@@ -10,20 +10,20 @@ Current stage: **F — Agent/MCP Layer** (PASS).
 | D | AI + Reporting | PASS |
 | E | Business Discovery | PASS |
 | F | Agent/MCP Layer | PASS |
-| G | Production | not started |
+| G | Production | PASS |
 | H | Commercialization | not started |
 
-## Stage F pass gate
+## Stage G pass gate
 
 ```text
-[x] apps/mcp on @modelcontextprotocol/server v2 (stdio)
-[x] product tools: list_businesses, get_business, enqueue_crawl, run_audit, get_audit, get_score, list_findings, list_opportunities, get_job
-[x] never execute_sql / fetch_any_url / Redis MCP surface
-[x] Zod 4 only in @lso/mcp (MCP peer); monorepo Zod 3 elsewhere
-[x] typecheck + allowlist unit test
-[x] smoke: registered tools match allowlist (9 tools)
+[x] GET /health/live + GET /health/ready (+ detailed /health)
+[x] correlation IDs (x-request-id) on API; worker job child loggers
+[x] docker compose: postgres + redis + ollama + api + worker + web
+[x] four test layers (unit, integration, e2e opt-in, smoke:prod)
+[x] typecheck + health/live/ready integration tests
+[x] hosting deferred until after V0.1 customer path (Stage H)
 ```
 
 ## Next
 
-Stage G — Production (health live/ready, compose app stack, correlation IDs, smoke).
+Stage H — Commercialization (customer path, plans, accounts, billing).

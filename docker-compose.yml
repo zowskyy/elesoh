@@ -25,5 +25,87 @@ services:
       timeout: 5s
       retries: 20
 
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD-SHELL", "ollama list >/dev/null 2>&1 || exit 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+
+  api:
+    build:
+      context: .
+      target: api
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://lso:lso@postgres:5432/lso
+      REDIS_URL: redis://redis:6379/0
+      API_PORT: "3001"
+      LOG_LEVEL: info
+      NODE_ENV: production
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3.2
+      AI_ENABLED: "true"
+      REPORT_DIRECTORY: /app/reports
+      CRAWLER_ALLOW_LOCALHOST: "false"
+    volumes:
+      - reports_data:/app/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3001/health/live').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  worker:
+    build:
+      context: .
+      target: worker
+    environment:
+      DATABASE_URL: postgres://lso:lso@postgres:5432/lso
+      REDIS_URL: redis://redis:6379/0
+      LOG_LEVEL: info
+      NODE_ENV: production
+      OLLAMA_URL: http://ollama:11434
+      OLLAMA_MODEL: llama3.2
+      AI_ENABLED: "true"
+      REPORT_DIRECTORY: /app/reports
+      CRAWLER_ALLOW_LOCALHOST: "false"
+    volumes:
+      - reports_data:/app/reports
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      target: web
+      args:
+        VITE_API_URL: http://localhost:3001
+    ports:
+      - "3000:80"
+    depends_on:
+      api:
+        condition: service_healthy
+
 volumes:
   postgres_data:
+  ollama_data:
+  reports_data:

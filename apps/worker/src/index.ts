@@ -1,6 +1,6 @@
 import { loadEnv } from '@lso/config';
 import { createDb, createPool } from '@lso/database';
-import { createLogger } from '@lso/logging';
+import { createLogger, withCorrelationId } from '@lso/logging';
 import {
   BULLMQ_PREFIX,
   createQueue,
@@ -120,9 +120,10 @@ const crawlWorker = new Worker(
     const jobId = String(job.data['jobId'] ?? '');
     const crawlId = String(job.data['crawlId'] ?? '');
     const url = String(job.data['url'] ?? '');
-    log.info({ bullJobId: job.id, jobId, crawlId, url, name: CRAWL_JOB_NAME }, 'crawl job started');
+    const jobLog = withCorrelationId(log, jobId || String(job.id ?? 'crawl'));
+    jobLog.info({ bullJobId: job.id, jobId, crawlId, url, name: CRAWL_JOB_NAME }, 'crawl job started');
     const result = await crawlService.executeCrawlJob({ jobId, crawlId, url });
-    log.info({ jobId, crawlId, pageCount: result.pageCount }, 'crawl job completed');
+    jobLog.info({ jobId, crawlId, pageCount: result.pageCount }, 'crawl job completed');
     return result;
   },
   { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
@@ -138,7 +139,8 @@ const auditWorker = new Worker(
     const mode = job.data['mode'] === 'full' ? 'full' : 'seo';
     const crawlIdRaw = job.data['crawlId'];
     const crawlId = typeof crawlIdRaw === 'string' ? crawlIdRaw : null;
-    log.info(
+    const jobLog = withCorrelationId(log, jobId || String(job.id ?? 'audit'));
+    jobLog.info(
       {
         bullJobId: job.id,
         jobId,
@@ -156,7 +158,7 @@ const auditWorker = new Worker(
       mode,
       crawlId,
     });
-    log.info(
+    jobLog.info(
       { jobId, auditId, findingCount: result.findingCount, overall: result.overall },
       'audit job completed',
     );
@@ -171,7 +173,8 @@ const reportWorker = new Worker(
     const jobId = String(job.data['jobId'] ?? '');
     const auditId = String(job.data['auditId'] ?? '');
     const format = job.data['format'] === 'pdf' ? 'pdf' : 'html';
-    log.info(
+    const jobLog = withCorrelationId(log, jobId || String(job.id ?? 'report'));
+    jobLog.info(
       {
         bullJobId: job.id,
         jobId,
@@ -182,7 +185,7 @@ const reportWorker = new Worker(
       'report job started',
     );
     const result = await reportService.executeReportJob({ jobId, auditId, format });
-    log.info({ jobId, auditId, reportIds: result.reportIds }, 'report job completed');
+    jobLog.info({ jobId, auditId, reportIds: result.reportIds }, 'report job completed');
     return result;
   },
   { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },
@@ -194,7 +197,8 @@ const discoveryWorker = new Worker(
     const jobId = String(job.data['jobId'] ?? '');
     const providerRunId = String(job.data['providerRunId'] ?? '');
     const query = job.data['query'] as DiscoverQuery;
-    log.info(
+    const jobLog = withCorrelationId(log, jobId || String(job.id ?? 'discovery'));
+    jobLog.info(
       { bullJobId: job.id, jobId, providerRunId, name: DISCOVER_JOB_NAME },
       'discovery job started',
     );
@@ -203,7 +207,7 @@ const discoveryWorker = new Worker(
       providerRunId,
       query,
     });
-    log.info({ jobId, providerRunId, ...result }, 'discovery job completed');
+    jobLog.info({ jobId, providerRunId, ...result }, 'discovery job completed');
     return result;
   },
   { connection: redis, prefix: BULLMQ_PREFIX, concurrency: 1 },

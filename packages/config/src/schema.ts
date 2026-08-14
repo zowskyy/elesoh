@@ -5,7 +5,7 @@ export const envSchema = z.object({
   REDIS_URL: z.string().min(1),
   API_PORT: z.coerce.number().int().positive().default(3001),
   WEB_PORT: z.coerce.number().int().positive().default(3000),
-  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace']).default('info'),
+  LOG_LEVEL: z.enum(['fatal', 'error', 'warn', 'info', 'debug', 'trace', 'silent']).default('info'),
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   CRAWLER_MAX_PAGES: z.coerce.number().int().positive().default(100),
   CRAWLER_MAX_DEPTH: z.coerce.number().int().nonnegative().default(3),

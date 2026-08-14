@@ -1,5 +1,6 @@
 import type { Env } from '@lso/config';
 import { createDb, createPool, type Database } from '@lso/database';
+import { createLogger, type Logger } from '@lso/logging';
 import { createQueue, createRedis, QUEUE_NAMES } from '@lso/queue';
 import {
   DrizzleAuditRepository,
@@ -31,6 +32,7 @@ import type { Redis } from 'ioredis';
 import type pg from 'pg';
 import type { AppEnv } from './env.js';
 import { errorHandler } from './middleware/error.js';
+import { createRequestContextMiddleware } from './middleware/request-context.js';
 import { registerAuditRoutes } from './routes/audits.js';
 import { registerBusinessRoutes } from './routes/businesses.js';
 import { registerCrawlRoutes } from './routes/crawls.js';
@@ -44,6 +46,7 @@ export interface ApiDependencies {
   db: Database;
   redis: Redis;
   startedAt: string;
+  logger: Logger;
   businessService: BusinessService;
   websiteService: WebsiteService;
   jobService: JobService;
@@ -60,6 +63,7 @@ export interface ApiDependencies {
 export function createApp(deps: ApiDependencies): Hono<AppEnv> {
   const app = new Hono<AppEnv>();
   app.use('*', cors());
+  app.use('*', createRequestContextMiddleware(deps.logger));
   app.use('*', async (c, next) => {
     c.set('pool', deps.pool);
     c.set('db', deps.db);
@@ -89,7 +93,10 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
   return app;
 }
 
-export function createApi(env: Env): {
+export function createApi(
+  env: Env,
+  options: { logger?: Logger } = {},
+): {
   app: Hono<AppEnv>;
   pool: pg.Pool;
   redis: Redis;
@@ -98,8 +105,10 @@ export function createApi(env: Env): {
   reportQueue: Queue;
   discoveryQueue: Queue;
   startedAt: string;
+  logger: Logger;
 } {
   const startedAt = new Date().toISOString();
+  const logger = options.logger ?? createLogger({ name: 'api', level: env.LOG_LEVEL });
   const pool = createPool(env.DATABASE_URL);
   const db = createDb(pool);
   const redis = createRedis(env.REDIS_URL);
@@ -172,6 +181,7 @@ export function createApi(env: Env): {
     db,
     redis,
     startedAt,
+    logger,
     businessService,
     websiteService,
     jobService,
@@ -193,5 +203,6 @@ export function createApi(env: Env): {
     reportQueue,
     discoveryQueue,
     startedAt,
+    logger,
   };
 }

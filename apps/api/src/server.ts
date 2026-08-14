@@ -5,7 +5,9 @@ import { createApi } from './app.js';
 
 const env = loadEnv();
 const log = createLogger({ name: 'api', level: env.LOG_LEVEL });
-const { app, pool, redis, crawlQueue, auditQueue, reportQueue, discoveryQueue } = createApi(env);
+const { app, pool, redis, crawlQueue, auditQueue, reportQueue, discoveryQueue } = createApi(env, {
+  logger: log,
+});
 
 const server = serve({ fetch: app.fetch, port: env.API_PORT }, () => {
   log.info({ port: env.API_PORT }, 'api listening');

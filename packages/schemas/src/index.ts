@@ -28,8 +28,13 @@ export {
 } from './crawl.js';
 export {
   dependencyStatusSchema,
+  healthDependenciesSchema,
   healthResponseSchema,
+  liveHealthResponseSchema,
+  readyHealthResponseSchema,
   type HealthResponse,
+  type LiveHealthResponse,
+  type ReadyHealthResponse,
 } from './health.js';
 export {
   enqueueDiscoveryRequestSchema,

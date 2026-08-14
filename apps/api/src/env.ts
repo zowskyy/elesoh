@@ -1,4 +1,5 @@
 import type { Database } from '@lso/database';
+import type { Logger } from '@lso/logging';
 import type {
   AuditService,
   BusinessService,
@@ -18,6 +19,8 @@ export type AppEnv = {
     db: Database;
     redis: Redis;
     startedAt: string;
+    requestId: string;
+    logger: Logger;
     businessService: BusinessService;
     websiteService: WebsiteService;
     jobService: JobService;

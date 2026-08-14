@@ -2,8 +2,14 @@ import { NotFoundError } from '@lso/services';
 import { UrlSecurityError } from '@lso/security';
 import type { ErrorHandler } from 'hono';
 import { ZodError } from 'zod';
+import type { AppEnv } from '../env.js';
 
-export const errorHandler: ErrorHandler = (error, c) => {
+export const errorHandler: ErrorHandler<AppEnv> = (error, c) => {
+  const logger = c.get('logger');
+  if (logger !== undefined) {
+    logger.error({ err: error, requestId: c.get('requestId') }, 'request failed');
+  }
+
   if (error instanceof ZodError) {
     return c.json({ error: 'validation_error', details: error.issues }, 400);
   }
