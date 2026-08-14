@@ -1,152 +1,164 @@
-# Free stack plan — $0 on your end
+# Free stack plan — $0 on your end (no Oracle)
 
-Everything below stays on **free tiers**. No Render, no home computer, no monthly bill.
+Everything stays on **free tiers**. No Oracle, no Render, no home computer, no monthly bill.
 
 ---
 
-## Recommended architecture (simplest)
+## Recommended architecture
 
-One Oracle Cloud Always Free VM runs the **entire backend**. Your phone runs the APK.
+Managed free services + Fly.io for the app. Your phone runs the APK.
 
 ```text
-┌─────────────────────┐         ┌──────────────────────────────────────────┐
-│  Android phone      │  HTTP   │  Oracle Cloud (Always Free, $0/mo)       │
-│  LocalSite APK      │ ──────► │  ┌─────────┐ ┌───────┐ ┌─────────────┐  │
-│  • History URLs     │         │  │ Postgres│ │ Redis │ │ API+Worker  │  │
-│  • Batch analyze    │         │  │ (Docker)│ │(Docker│ │ Playwright  │  │
-└─────────────────────┘         │  └─────────┘ └───────┘ └─────────────┘  │
-                                │         port 3001 (open in firewall)     │
-                                └──────────────────────────────────────────┘
+┌─────────────────────┐         ┌─────────────────────────────────────────┐
+│  Android phone      │  HTTPS  │  Fly.io (free allowance, $0)            │
+│  LocalSite APK      │ ──────► │  API + Taylor workers (fetch crawler)   │
+└─────────────────────┘         └──────────────┬──────────────────────────┘
+                                               │
+                    ┌──────────────────────────┼──────────────────────────┐
+                    │                          │                          │
+                    ▼                          ▼                          ▼
+            ┌───────────────┐          ┌───────────────┐          ┌───────────────┐
+            │  Supabase     │          │  Upstash      │          │  Fly volume   │
+            │  Postgres $0  │          │  Redis $0     │          │  reports $0   │
+            └───────────────┘          └───────────────┘          └───────────────┘
 ```
 
-| Piece | Where | Cost |
-|-------|--------|------|
-| Postgres | Docker on Oracle VM | $0 |
-| Redis (job queue) | Docker on Oracle VM | $0 |
-| API + Taylor workers | Docker on Oracle VM | $0 |
-| Playwright crawls | Same VM | $0 |
-| AI reports | Deterministic fallback (no Ollama) | $0 |
+| Piece | Service | Cost |
+|-------|---------|------|
+| Postgres | [Supabase](https://supabase.com) (or [Neon](https://neon.tech)) | $0 |
+| Redis queue | [Upstash](https://upstash.com) | $0 |
+| API + workers | [Fly.io](https://fly.io) | $0 (within free allowance) |
+| HTTPS URL | `https://your-app.fly.dev` | $0 |
+| Crawler | HTTP fetch (fits 512 MB RAM) | $0 |
+| AI reports | Deterministic fallback | $0 |
 | Android app | APK sideload | $0 |
-| Domain / HTTPS | Optional DuckDNS + IP (HTTP works) | $0 |
 
-**Your only recurring cost: $0.**
+**Total: $0/month**
+
+> **Trade-off vs Oracle:** fetch crawler instead of Playwright — SEO audits still run, but no headless Chrome (some JS-heavy sites may score differently).
 
 ---
 
 ## One-time setup checklist
 
-Do this once (~45 min total, mostly waiting on builds).
+~30 min total (mostly browser + one terminal session).
 
-### Phase 1 — Oracle VM (browser, ~15 min)
+### Phase 1 — Free accounts (browser, ~10 min)
 
-- [ ] Sign up: https://www.oracle.com/cloud/free/
-- [ ] Create **Ampere A1** VM — Ubuntu 22.04, **2 OCPU / 12 GB RAM**
-- [ ] Download SSH private key
-- [ ] Note **Public IP**
-- [ ] Security list: open **TCP 3001** from `0.0.0.0/0`
+Do all of this from your phone or laptop browser:
 
-Guide: [oracle-cloud.md](./oracle-cloud.md)
+**1. Supabase Postgres**
+- [ ] https://supabase.com → sign up → New project
+- [ ] **Settings → Database → Connection string → URI** (Session mode)
+- [ ] Copy URL, add `?sslmode=require` if missing
 
-### Phase 2 — Install backend (SSH once, ~25 min)
+**2. Upstash Redis**
+- [ ] https://upstash.com → sign up → Create database
+- [ ] Copy **Redis URL** (`rediss://...`)
+
+**3. Fly.io**
+- [ ] https://fly.io → sign up (card may be required for verification; stay within free limits = $0)
+
+Guide for Supabase URL format: [supabase.md](./supabase.md)
+
+### Phase 2 — Deploy to Fly (terminal once, ~15 min)
+
+Use any terminal once — laptop, library PC, or [GitHub Codespaces](https://github.com/codespaces) (free):
 
 ```bash
-ssh -i your-key.key ubuntu@YOUR_PUBLIC_IP
+git clone -b cursor/android-apk-browser-history-5128 https://github.com/zowskyy/elesoh
+cd elesoh
 
-export POSTGRES_PASSWORD='long-random-password'
-curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-browser-history-5128/scripts/deploy/oracle-cloud-install.sh | bash
+# Pick a unique app name (letters, numbers, hyphens)
+export FLY_APP_NAME=lso-optimizer-YOURNAME
+export DATABASE_URL='postgresql://postgres:PASSWORD@db.PROJECT.supabase.co:5432/postgres?sslmode=require'
+export REDIS_URL='rediss://default:PASSWORD@REGION.upstash.io:6379'
+
+bash scripts/deploy/fly-free-deploy.sh
 ```
 
-Save the printed URL: `http://YOUR_PUBLIC_IP:3001`
+Or manually:
+
+```bash
+fly auth login
+fly apps create lso-optimizer-YOURNAME
+fly volumes create lso_reports --size 1 --region iad -a lso-optimizer-YOURNAME --yes
+fly secrets set DATABASE_URL="..." REDIS_URL="..." -a lso-optimizer-YOURNAME
+fly deploy -a lso-optimizer-YOURNAME
+```
+
+Run migrations (first deploy usually handles via container startup, or run locally):
+
+```bash
+export DATABASE_URL='...'
+pnpm db:migrate
+```
+
+Your API URL: **`https://lso-optimizer-YOURNAME.fly.dev`**
 
 ### Phase 3 — Phone (~5 min)
 
 - [ ] Install APK:  
   https://github.com/zowskyy/elesoh/raw/cursor/android-apk-browser-history-5128/releases/LocalSiteOptimizer-debug.apk
-- [ ] Test in Chrome: `http://YOUR_PUBLIC_IP:3001/health`
-- [ ] App → **Settings** → paste API URL → **Save**
+- [ ] Test in Chrome: `https://lso-optimizer-YOURNAME.fly.dev/health`
+- [ ] App → **Settings** → paste Fly URL → **Save**
 - [ ] **History** → select sites → **Analyze**
 
 **Done.** No computer needed after Phase 2.
 
 ---
 
-## Optional upgrades (still $0)
+## Free tier limits
 
-Use these only if you want extras — **not required**.
-
-| Want | Free service | Replaces on VM | Compose file |
-|------|--------------|----------------|--------------|
-| SQL dashboard + backups UI | [Supabase](https://supabase.com) Postgres | Docker Postgres | `docker-compose.oracle-supabase.yml` |
-| Redis elsewhere | [Upstash](https://upstash.com) | Docker Redis | set `REDIS_URL` secret/env |
-| Memorable hostname | [DuckDNS](https://duckdns.org) | Raw IP | point subdomain → VM IP |
-| Lighter deploy (no Playwright) | Fly.io + Neon + Upstash | Whole Oracle VM | [cloud-hosting-free.md](./cloud-hosting-free.md) Option A |
-
-Default plan: **keep Postgres + Redis on Oracle** — fewer accounts, one bill ($0).
+| Service | Limit | What it means |
+|---------|-------|---------------|
+| Fly.io | Machine sleeps when idle | First request after sleep ~15–30s wake |
+| Fly.io | 512 MB RAM on free/small VMs | Enough for fetch crawler |
+| Supabase | 500 MB DB, 2 projects | Fine for personal use |
+| Supabase | May pause after inactivity | Wake from dashboard |
+| Upstash | 10k commands/day free | OK for moderate batch use |
+| Neon (alt) | 0.5 GB, may pause | Same idea as Supabase |
 
 ---
 
-## What we deliberately skip (paid or heavy)
+## Daily use
+
+1. Open APK (any network)
+2. **History** or **Analyze**
+3. If app feels slow first time, wait ~30s (Fly waking up)
+
+---
+
+## Maintenance
+
+```bash
+fly logs -a lso-optimizer-YOURNAME
+fly deploy -a lso-optimizer-YOURNAME          # update
+fly secrets set DATABASE_URL="..." -a ...     # rotate credentials
+```
+
+Browse crawl/audit data in **Supabase Table Editor**.
+
+---
+
+## Alternatives (still $0)
+
+| If you… | Use |
+|---------|-----|
+| Prefer Neon over Supabase | Same steps — swap `DATABASE_URL` |
+| Want Playwright (heavier) | Oracle VM — see [oracle-cloud.md](./oracle-cloud.md) (optional) |
+| Want to self-host on PC | `docker compose up` on LAN (not phone-only) |
+
+---
+
+## What we skip
 
 | Skipped | Why |
 |---------|-----|
-| Render Standard | ~$25/mo |
-| Ollama / cloud GPU | Not needed — fallback narratives work |
-| Stripe / billing | Deferred |
-| Custom domain + HTTPS | Optional; HTTP + IP works with APK |
-| Your home PC 24/7 | Replaced by Oracle VM |
-
----
-
-## Free tier limits to know
-
-| Service | Limit | Impact |
-|---------|-------|--------|
-| Oracle Always Free | 4 OCPU / 24 GB RAM total across A1 VMs | 2 OCPU + 12 GB is enough |
-| Oracle | VM stops if account idle/abused — rare | Keep instance running |
-| Supabase (if used) | 500 MB DB, may pause when idle | Fine for personal use |
-| Upstash (if used) | 10k commands/day free | Enough for moderate use |
-| Fly.io (alt path) | Sleeps when idle, 512 MB RAM | Fetch crawler only |
-
----
-
-## Daily use (after setup)
-
-1. Open APK on phone (any network)
-2. **History** or **Analyze** — backend on Oracle does the work
-3. View scores + open HTML reports in browser
-
-No laptop. No Wi‑Fi pairing with home network.
-
----
-
-## Maintenance (rare)
-
-On the VM:
-
-```bash
-cd ~/elesoh
-docker compose -f docker-compose.oracle.yml logs -f app    # debug
-docker compose -f docker-compose.oracle.yml up -d          # after reboot
-git pull && docker compose -f docker-compose.oracle.yml up -d --build  # update
-```
-
----
-
-## Decision tree
-
-```text
-Want full Playwright crawls?
-  YES → Oracle all-in-one (this plan) ✅
-  NO  → Fly.io + Neon + Upstash (fetch only, still $0)
-
-Want Supabase dashboard for data?
-  YES → Oracle + Supabase Postgres (see supabase.md)
-  NO  → Oracle Postgres in Docker (default)
-
-Want HTTPS / pretty URL?
-  YES → DuckDNS + reverse proxy (future doc)
-  NO  → http://IP:3001 in Settings (works today)
-```
+| Oracle | You chose not to use it |
+| Render | ~$25/mo |
+| Home PC 24/7 | Fly handles it |
+| Ollama / GPU | Fallback narratives |
 
 ---
 
@@ -154,17 +166,16 @@ Want HTTPS / pretty URL?
 
 | File | Purpose |
 |------|---------|
-| `docker-compose.oracle.yml` | Default free stack (Postgres + Redis + app) |
-| `docker-compose.oracle-supabase.yml` | Oracle app + Supabase Postgres |
-| `scripts/deploy/oracle-cloud-install.sh` | One-command VM install |
-| `docs/development/oracle-cloud.md` | Step-by-step Oracle guide |
-| `docs/development/supabase.md` | Optional Supabase Postgres |
+| `fly.toml` | Fly.io app config |
+| `infrastructure/docker/cloud-lite.Dockerfile` | Small image, fetch crawler |
+| `scripts/deploy/fly-free-deploy.sh` | One-command Fly deploy |
+| `docs/development/supabase.md` | Supabase Postgres details |
 | `releases/LocalSiteOptimizer-debug.apk` | Phone app |
 
 ---
 
 ## Summary
 
-**Plan:** One Oracle Always Free VM + Android APK = **$0/month**, no home computer.
+**Plan:** Supabase + Upstash + Fly.io + APK = **$0/month**, no Oracle, no home computer.
 
-**Your next step:** [oracle-cloud.md](./oracle-cloud.md) Phase 1 — create the VM.
+**Next step:** Create Supabase + Upstash accounts (Phase 1), then run `fly-free-deploy.sh` (Phase 2).

@@ -42,19 +42,19 @@ export function SettingsPage(): ReactElement {
             setApiSaved(apiUrl);
           }}
         >
-          <h3>Oracle Cloud API URL</h3>
+          <h3>Fly.io API URL</h3>
           <p className="muted">
             After{' '}
-            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/oracle-cloud.md" target="_blank" rel="noreferrer">
-              Oracle Cloud setup
-            </a>
-            , paste your VM URL (e.g. <code>http://129.x.x.x:3001</code>).
+            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/free-stack-plan.md" target="_blank" rel="noreferrer">
+              free stack setup
+            </a>{' '}
+            (Supabase + Upstash + Fly), paste your URL.
           </p>
           <div className="history-actions">
             <input
               value={apiUrl}
               onChange={(event) => setApiUrl(event.target.value)}
-              placeholder="http://129.x.x.x:3001"
+              placeholder="https://lso-optimizer-you.fly.dev"
               style={{ flex: 1, minWidth: '16rem' }}
             />
             <button type="submit">Save API URL</button>

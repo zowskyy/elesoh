@@ -13,8 +13,6 @@ interface HealthResponse {
 
 const FREE_PLAN =
   'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/free-stack-plan.md';
-const ORACLE_GUIDE =
-  'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/oracle-cloud.md';
 
 export function DashboardPage(): ReactElement {
   const [health, setHealth] = useState<HealthResponse | null>(null);
@@ -37,33 +35,41 @@ export function DashboardPage(): ReactElement {
       <section className="setup-card">
         <h2>Free stack — $0/month</h2>
         <p className="muted">
-          One Oracle Cloud VM (free forever) + this app. No Render, no home computer.
+          Supabase + Upstash + Fly.io. No Oracle, no Render, no home computer.
         </p>
         <p>
           <a href={FREE_PLAN} target="_blank" rel="noreferrer">
-            Read the full free stack plan
+            Full setup guide
           </a>
         </p>
         <h3>Quick setup</h3>
         <ol>
           <li>
-            <a href={ORACLE_GUIDE} target="_blank" rel="noreferrer">
-              Create Oracle Always Free VM
-            </a>{' '}
-            — open port <strong>3001</strong>
+            Create free accounts:{' '}
+            <a href="https://supabase.com" target="_blank" rel="noreferrer">
+              Supabase
+            </a>
+            ,{' '}
+            <a href="https://upstash.com" target="_blank" rel="noreferrer">
+              Upstash
+            </a>
+            ,{' '}
+            <a href="https://fly.io" target="_blank" rel="noreferrer">
+              Fly.io
+            </a>
           </li>
           <li>
-            SSH once, run:
-            <pre className="setup-code">{`export POSTGRES_PASSWORD='your-password'
-curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-browser-history-5128/scripts/deploy/oracle-cloud-install.sh | bash`}</pre>
+            Deploy once (terminal or Codespaces):
+            <pre className="setup-code">{`export FLY_APP_NAME=lso-optimizer-you
+export DATABASE_URL='postgresql://...supabase...'
+export REDIS_URL='rediss://...upstash...'
+bash scripts/deploy/fly-free-deploy.sh`}</pre>
           </li>
           <li>
-            <Link to="/settings">Settings</Link> → save <code>http://YOUR_VM_IP:3001</code>
+            <Link to="/settings">Settings</Link> → save{' '}
+            <code>https://lso-optimizer-you.fly.dev</code>
           </li>
         </ol>
-        <p className="muted">
-          Optional later: Supabase Postgres, DuckDNS hostname — still $0. See free stack plan.
-        </p>
         <p>
           <Link to="/settings">Go to Settings →</Link>
         </p>
@@ -90,7 +96,7 @@ curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-b
       </p>
       {error !== null ? (
         <p className="error">
-          {error}. Check Oracle firewall (port 3001) and <Link to="/settings">Settings</Link>.
+          {error}. If Fly was sleeping, wait 30s and retry. Check <Link to="/settings">Settings</Link>.
         </p>
       ) : null}
       {health !== null ? (
