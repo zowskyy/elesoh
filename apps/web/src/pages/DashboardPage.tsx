@@ -11,6 +11,9 @@ interface HealthResponse {
   };
 }
 
+const ORACLE_GUIDE =
+  'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/oracle-cloud.md';
+
 export function DashboardPage(): ReactElement {
   const [health, setHealth] = useState<HealthResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -30,35 +33,28 @@ export function DashboardPage(): ReactElement {
   if (native && !configured) {
     return (
       <section className="setup-card">
-        <h2>Connect free cloud backend</h2>
+        <h2>Oracle Cloud setup (Option B — $0)</h2>
         <p className="muted">
-          No computer and no paid Render. Deploy once for $0, then paste your API URL here.
+          Full Playwright crawls on Oracle&apos;s Always Free VM. One SSH session to install, then your phone
+          works forever with no home computer.
         </p>
         <ol>
           <li>
-            Follow the free guide:{' '}
-            <a
-              href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/cloud-hosting-free.md"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Fly.io + Neon + Upstash ($0)
-            </a>
-          </li>
-          <li>
-            Or use{' '}
-            <a
-              href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/cloud-hosting-free.md#option-b--oracle-cloud-always-free-0-forever"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Oracle Cloud Always Free
+            <a href={ORACLE_GUIDE} target="_blank" rel="noreferrer">
+              Open the Oracle Cloud guide
             </a>{' '}
-            (full crawls)
+            — create a free Ampere VM and open port <strong>3001</strong>
           </li>
           <li>
-            Open <Link to="/settings">Settings</Link> and save your API URL (e.g.{' '}
-            <code>https://lso-optimizer-you.fly.dev</code>)
+            SSH once and run:
+            <pre className="setup-code">{`export POSTGRES_PASSWORD='your-password'
+curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-browser-history-5128/scripts/deploy/oracle-cloud-install.sh | bash`}</pre>
+          </li>
+          <li>
+            Copy the printed URL (e.g. <code>http://129.x.x.x:3001</code>)
+          </li>
+          <li>
+            <Link to="/settings">Settings</Link> → paste URL → Save
           </li>
         </ol>
         <p>
@@ -85,7 +81,12 @@ export function DashboardPage(): ReactElement {
           </>
         ) : null}
       </p>
-      {error !== null ? <p className="error">{error}</p> : null}
+      {error !== null ? (
+        <p className="error">
+          {error}. Check Oracle security list (port 3001) and your API URL in{' '}
+          <Link to="/settings">Settings</Link>.
+        </p>
+      ) : null}
       {health !== null ? (
         <dl>
           <dt>API</dt>

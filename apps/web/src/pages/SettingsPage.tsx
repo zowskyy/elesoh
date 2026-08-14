@@ -42,23 +42,19 @@ export function SettingsPage(): ReactElement {
             setApiSaved(apiUrl);
           }}
         >
-          <h3>Free cloud API URL</h3>
+          <h3>Oracle Cloud API URL</h3>
           <p className="muted">
-            Deploy for $0 with{' '}
-            <a
-              href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/cloud-hosting-free.md"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Fly.io + Neon + Upstash
-            </a>{' '}
-            or Oracle Cloud. Paste your URL below — no Render payment needed.
+            After{' '}
+            <a href="https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/oracle-cloud.md" target="_blank" rel="noreferrer">
+              Oracle Cloud setup
+            </a>
+            , paste your VM URL (e.g. <code>http://129.x.x.x:3001</code>).
           </p>
           <div className="history-actions">
             <input
               value={apiUrl}
               onChange={(event) => setApiUrl(event.target.value)}
-              placeholder="https://lso-optimizer-you.fly.dev"
+              placeholder="http://129.x.x.x:3001"
               style={{ flex: 1, minWidth: '16rem' }}
             />
             <button type="submit">Save API URL</button>

@@ -1,7 +1,9 @@
 # Cloud hosting
 
-**Free ($0):** [cloud-hosting-free.md](./cloud-hosting-free.md) — Fly.io + Neon + Upstash, or Oracle Cloud Always Free.
+**Option B — Oracle Cloud Always Free ($0):** [oracle-cloud.md](./oracle-cloud.md) ← **recommended for full Playwright**
 
-**Paid (optional):** `render.paid.yaml` — Render Standard (~$25/mo) if you want managed Playwright hosting.
+**Option A — Fly.io + Neon + Upstash ($0):** [cloud-hosting-free.md](./cloud-hosting-free.md)
 
-The Android APK does not require Render. Set your free cloud URL once in **Settings**.
+**Paid (optional):** `render.paid.yaml` — Render Standard (~$25/mo)
+
+The Android APK uses your Oracle VM URL from **Settings** (e.g. `http://YOUR_IP:3001`).
