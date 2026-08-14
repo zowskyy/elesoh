@@ -9,6 +9,7 @@ import type {
   DiscoveryService,
   JobService,
   ReportService,
+  TaylorBatchService,
   WebsiteService,
 } from '@lso/services';
 import type { Queue } from 'bullmq';
@@ -25,6 +26,7 @@ export type AppEnv = {
     requestId: string;
     logger: Logger;
     analyzeService: AnalyzeService;
+    taylorBatchService: TaylorBatchService;
     businessService: BusinessService;
     websiteService: WebsiteService;
     jobService: JobService;

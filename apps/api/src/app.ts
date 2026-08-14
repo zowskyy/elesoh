@@ -24,6 +24,7 @@ import {
   DiscoveryService,
   JobService,
   ReportService,
+  TaylorBatchService,
   WebsiteService,
 } from '@lso/services';
 import type { Queue } from 'bullmq';
@@ -52,6 +53,7 @@ export interface ApiDependencies {
   startedAt: string;
   logger: Logger;
   analyzeService: AnalyzeService;
+  taylorBatchService: TaylorBatchService;
   businessService: BusinessService;
   websiteService: WebsiteService;
   jobService: JobService;
@@ -76,6 +78,7 @@ export function createApp(deps: ApiDependencies): Hono<AppEnv> {
     c.set('redis', deps.redis);
     c.set('startedAt', deps.startedAt);
     c.set('analyzeService', deps.analyzeService);
+    c.set('taylorBatchService', deps.taylorBatchService);
     c.set('businessService', deps.businessService);
     c.set('websiteService', deps.websiteService);
     c.set('jobService', deps.jobService);
@@ -181,6 +184,13 @@ export function createApi(
     reportQueue,
     env,
   );
+  const taylorBatchService = new TaylorBatchService(
+    redis,
+    jobRepo,
+    analyzeService,
+    auditService,
+    reportService,
+  );
   const discoveryService = new DiscoveryService(
     businessRepo,
     websiteRepo,
@@ -199,6 +209,7 @@ export function createApi(
     startedAt,
     logger,
     analyzeService,
+    taylorBatchService,
     businessService,
     websiteService,
     jobService,

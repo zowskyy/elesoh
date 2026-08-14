@@ -1,4 +1,5 @@
 export { AnalyzeService } from './analyze-service.js';
+export { TaylorBatchService, type TaylorBatch } from './taylor-batch-service.js';
 export {
   DISCOVER_JOB_NAME,
   DISCOVERY_QUEUE_NAME,

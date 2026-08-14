@@ -4,6 +4,7 @@ import type { ReactElement } from 'react';
 const links = [
   ['/', 'Dashboard'],
   ['/analyze', 'Analyze'],
+  ['/history', 'History'],
   ['/businesses', 'Businesses'],
   ['/websites', 'Websites'],
   ['/discovery', 'Discovery'],
