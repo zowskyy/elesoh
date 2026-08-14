@@ -11,6 +11,8 @@ interface HealthResponse {
   };
 }
 
+const FREE_PLAN =
+  'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/free-stack-plan.md';
 const ORACLE_GUIDE =
   'https://github.com/zowskyy/elesoh/blob/cursor/android-apk-browser-history-5128/docs/development/oracle-cloud.md';
 
@@ -33,30 +35,35 @@ export function DashboardPage(): ReactElement {
   if (native && !configured) {
     return (
       <section className="setup-card">
-        <h2>Oracle Cloud setup (Option B — $0)</h2>
+        <h2>Free stack — $0/month</h2>
         <p className="muted">
-          Full Playwright crawls on Oracle&apos;s Always Free VM. One SSH session to install, then your phone
-          works forever with no home computer.
+          One Oracle Cloud VM (free forever) + this app. No Render, no home computer.
         </p>
+        <p>
+          <a href={FREE_PLAN} target="_blank" rel="noreferrer">
+            Read the full free stack plan
+          </a>
+        </p>
+        <h3>Quick setup</h3>
         <ol>
           <li>
             <a href={ORACLE_GUIDE} target="_blank" rel="noreferrer">
-              Open the Oracle Cloud guide
+              Create Oracle Always Free VM
             </a>{' '}
-            — create a free Ampere VM and open port <strong>3001</strong>
+            — open port <strong>3001</strong>
           </li>
           <li>
-            SSH once and run:
+            SSH once, run:
             <pre className="setup-code">{`export POSTGRES_PASSWORD='your-password'
 curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-browser-history-5128/scripts/deploy/oracle-cloud-install.sh | bash`}</pre>
           </li>
           <li>
-            Copy the printed URL (e.g. <code>http://129.x.x.x:3001</code>)
-          </li>
-          <li>
-            <Link to="/settings">Settings</Link> → paste URL → Save
+            <Link to="/settings">Settings</Link> → save <code>http://YOUR_VM_IP:3001</code>
           </li>
         </ol>
+        <p className="muted">
+          Optional later: Supabase Postgres, DuckDNS hostname — still $0. See free stack plan.
+        </p>
         <p>
           <Link to="/settings">Go to Settings →</Link>
         </p>
@@ -69,7 +76,7 @@ curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-b
       <h2>Dashboard</h2>
       {native && cloud ? (
         <p className="cloud-banner">
-          <strong>Cloud mode</strong> — {getApiBaseUrl()}. No computer required.
+          <strong>Free cloud</strong> — {getApiBaseUrl()}. $0/month, no computer required.
         </p>
       ) : null}
       <p>
@@ -83,8 +90,7 @@ curl -fsSL https://raw.githubusercontent.com/zowskyy/elesoh/cursor/android-apk-b
       </p>
       {error !== null ? (
         <p className="error">
-          {error}. Check Oracle security list (port 3001) and your API URL in{' '}
-          <Link to="/settings">Settings</Link>.
+          {error}. Check Oracle firewall (port 3001) and <Link to="/settings">Settings</Link>.
         </p>
       ) : null}
       {health !== null ? (

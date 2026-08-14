@@ -23,8 +23,9 @@ Current stage: **H — Commercialization** (PASS for customer path + plan catalo
 [x] typecheck + plan unit test
 [ ] Accounts / Stripe / schedules / API keys (explicitly deferred)
 [x] Cloud hosting blueprint — free Fly.io + Oracle paths (Render optional/paid)
+[x] Free stack plan — Oracle all-in-one $0/mo (docs/development/free-stack-plan.md)
 ```
 
 ## Next
 
-Optional: enforce plans, auth, billing; or ship V0.1 as-is with the analyze path and Android APK.
+Ship V0.1 with the free stack: [docs/development/free-stack-plan.md](docs/development/free-stack-plan.md). Optional: Supabase, auth, billing.
