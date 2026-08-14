@@ -1,7 +1,7 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-  Start LocalSite Optimizer — Docker infra, API, worker, web UI, open browser.
+  Start LocalSite Optimizer - Docker infra, API, worker, web UI, open browser.
 #>
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -24,12 +24,12 @@ function Test-ApiLive {
 Write-Host '==> LocalSite Optimizer' -ForegroundColor Cyan
 
 if (-not (Test-Path '.env')) {
-  Write-Host 'No .env found — running install first...' -ForegroundColor Yellow
+  Write-Host 'No .env found - running install first...' -ForegroundColor Yellow
   & (Join-Path $PSScriptRoot 'Install-LocalSiteOptimizer.ps1')
 }
 
 if (-not (Test-Path 'node_modules')) {
-  Write-Host 'Dependencies missing — run Install-LocalSiteOptimizer.ps1 first.' -ForegroundColor Red
+  Write-Host 'Dependencies missing - run Install-LocalSiteOptimizer.ps1 first.' -ForegroundColor Red
   exit 1
 }
 
@@ -58,7 +58,7 @@ Write-Host '==> Applying migrations...'
 pnpm db:migrate 2>$null
 
 if (Test-ApiLive) {
-  Write-Host '==> API already running — opening app...'
+  Write-Host '==> API already running - opening app...'
   Start-Process $WebUrl
   Write-Host "App: $WebUrl"
   exit 0
@@ -68,10 +68,10 @@ Write-Host '==> Starting API + worker + web (new window)...'
 $devScript = Join-Path $env:TEMP 'lso-dev-server.ps1'
 @(
   "Set-Location '$Root'"
-  '$host.UI.RawUI.WindowTitle = "LocalSite Optimizer — Server"'
+  '$host.UI.RawUI.WindowTitle = "LocalSite Optimizer - Server"'
   'Write-Host "LocalSite Optimizer server running. Close this window to stop." -ForegroundColor Green'
   'pnpm dev'
-) | Set-Content -Path $devScript -Encoding UTF8
+) | Set-Content -Path $devScript -Encoding Ascii
 
 Start-Process powershell -ArgumentList '-NoExit', '-ExecutionPolicy', 'Bypass', '-File', $devScript
 
@@ -100,5 +100,5 @@ Write-Host 'LocalSite Optimizer is running.' -ForegroundColor Green
 Write-Host "  App:  $WebUrl"
 Write-Host "  API:  http://localhost:3001/health"
 Write-Host ''
-Write-Host 'To stop: close the "LocalSite Optimizer — Server" PowerShell window.'
+Write-Host 'To stop: close the "LocalSite Optimizer - Server" PowerShell window.'
 Write-Host 'Docker Postgres/Redis keep running (docker compose down to stop).'

@@ -15,7 +15,7 @@ function Require-Command([string]$Name, [string]$InstallHint) {
   }
 }
 
-Write-Host '==> LocalSite Optimizer — Windows install' -ForegroundColor Cyan
+Write-Host '==> LocalSite Optimizer - Windows install' -ForegroundColor Cyan
 Write-Host "    Root: $Root"
 
 Require-Command 'node' 'Install Node.js 22+ from https://nodejs.org/'
